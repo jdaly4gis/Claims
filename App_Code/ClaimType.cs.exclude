@@ -1,0 +1,121 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
+
+/// <summary>
+/// Summary description for ClaimType
+/// </summary>
+public class ClaimType:AdminFunctions
+{
+   private string _claimclassID;
+   private string _name;
+   private string _description;
+   private SqlCommand _query;
+   private string _action;
+
+   List<string>  _fields;
+   private HttpContext _context;
+
+	public ClaimType()
+	{
+		//
+		// TODO: Add constructor logic here
+		//
+	}
+
+   public ClaimType(string claimclassID)
+	{
+      this._claimclassID = claimclassID;
+	}
+
+	public ClaimType(string claimclassID, string name)
+	{
+
+	}
+
+	public ClaimType(HttpContext inVars)
+	{
+      List<string> _fields = new List<string>();
+
+      this._claimclassID = inVars.Request["claimtype"];
+      this._name = inVars.Request["name"];
+      this._description = inVars.Request["description"];
+      this._action = inVars.Request["action"];
+      this._context = inVars;
+
+
+      if (this._action == "1")
+      {
+         this._query = this.Add();
+      }
+      else if (this._action == "2")
+      {
+         this._query = this.Update();
+      }
+      else
+      {
+         this._query = this.Delete(Convert.ToInt32(this._claimclassID));
+      }
+	}
+
+   public int ClaimTypeID
+   {
+      get { return Convert.ToInt32(_claimclassID); }
+   }
+
+   public string ClaimTypeName
+   {
+      get { return _name; }
+   }
+
+   public int ClaimTypeAction
+   {
+      get { return Convert.ToInt32(_action); }
+   }
+
+   public SqlCommand GetSQLQuery
+   {
+      get { return this._query; }
+   }
+
+   public override SqlCommand Add()
+   {
+
+      String[] fields = { this._name, this._description };
+      this._fields = new List<string>();
+      string sql;
+      foreach (string s in fields)
+      {
+         this._fields.Add("'" + s + "'");
+      }
+      sql = String.Join(",", this._fields.ToArray());
+
+      return (null);
+   }
+
+   public override string Add(string name)
+   {
+      return (null);
+   }
+
+   public override string Update()
+   {
+      return (@"UPDATE ClaimType SET Name='"   + this._name + "'," +
+                                      "Description='"  + this._description + "' " +
+                                      "WHERE ID=" + this._claimclassID);
+   }
+
+   public override string Update(int id, string name)
+   {
+      return (@"UPDATE ClaimType SET Name='"  + this._name  + "' WHERE ID=" + this._claimclassID);
+   }
+
+   public override string Delete(int id)
+   {
+      return (@"DELETE FROM ClaimType WHERE ID=" + this._claimclassID);
+   }
+}

@@ -1,0 +1,130 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Web;
+
+/// <summary>
+/// Summary description for Incident
+/// </summary>
+public class EquipmentDistribution:AdminFunctions
+{
+   private string _incID;
+   private string _RecID;
+   private string _Description;
+   private string _RequestDate;
+   private string _DeliveryDate;
+   private string _ReceiptDate;
+
+
+   private string _action;
+   private SqlCommand _query;
+   List<string>  _fields;
+   private HttpContext _context;
+
+	public EquipmentDistribution()
+	{
+		//
+		// TODO: Add constructor logic here
+		//
+	}
+
+   public EquipmentDistribution(string incID)
+	{
+      this._incID = incID;
+	}
+
+   public EquipmentDistribution(string incID, string name)
+	{
+
+	}
+
+	public EquipmentDistribution(HttpContext inVars)
+	{
+      List<string> _fields = new List<string>();
+
+      this._RecID = inVars.Request["RecIDED"];
+      this._incID = inVars.Request["IncNoED"];
+      this._Description = inVars.Request["Description"];
+      this._RequestDate = inVars.Request["RequestDate"];
+      this._DeliveryDate = inVars.Request["DeliveryDate"];
+      this._ReceiptDate = inVars.Request["ReceiptDate"];
+
+      this._action = inVars.Request["action"];
+      this._context = inVars;
+      
+      if (this._action == "1")
+      {
+         this._query = this.Add();
+      }
+      else if (this._action == "2")
+      {
+         this._query = this.Update();
+      }
+      else
+      {
+         this._query = this.Delete(Convert.ToInt32(this._incID));
+      }
+	}
+
+   public int IncidentID
+   {
+      get { return Convert.ToInt32(_incID); }
+   }
+
+
+
+   public int IncidentAction
+   {
+      get { return Convert.ToInt32(_action); }
+   }
+
+   public SqlCommand GetSQLQuery
+   {
+      get { return this._query; }
+   }
+
+   public override SqlCommand Add()
+   {
+      String[] fields = { this._incID, this._Description, this._RequestDate, this._DeliveryDate, this._ReceiptDate };
+      this._fields = new List<string>();
+      string sql;
+      foreach (string s in fields)
+      {
+         string temp = s.Replace("'", "''");
+         this._fields.Add("'" + temp + "'");
+      }
+      sql = String.Join(",", this._fields.ToArray());
+
+      return (null);
+   }
+
+   public override string Add(string name)
+   {
+      return (null);
+   }
+
+   public override string Update()
+   {
+      this._Description = this._Description.Replace("'", "''");
+
+      return (@"UPDATE EquipmentDistribution SET  IncidentID='"   + this._incID + "'," +
+                                      "Description='"  + this._Description + "'," +
+                                      "RequestDate='" + this._RequestDate + "'," +
+                                      "DeliveryDate='"   + this._DeliveryDate + "'," +
+                                      "ReceiptDate='" + this._ReceiptDate + "' " +
+                                      "WHERE ID ='" + this._RecID + "'");
+   }
+
+   public override string Update(int id, string name)
+   {
+      return ("");
+   }
+
+   public override string Delete(int id)
+   {
+      return (@"DELETE FROM EquipmentDistribution WHERE ID=" + this._RecID);
+   }
+}

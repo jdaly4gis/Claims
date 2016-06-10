@@ -1,0 +1,265 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+
+#formCenter
+{
+   position:absolute;
+   height: 400px;
+   width: 400px;
+   margin: -250px 0 0 -200px;
+   top: 50%;
+   left: 50%;
+}   
+
+#formBox
+  {
+    text-align:center;
+     width:400px;
+     border: 1px solid #9f9f9f;
+  }
+  
+#response
+  {
+     height:40px;
+  }   
+#results
+  {
+     text-align:center;
+     font-weight: normal;
+     font-family: 'Muli', sans-serif;
+     font-size: 14px;
+  }  
+
+.desc
+  {
+    font-weight: normal;
+    position: relative;
+    text-shadow: 0 -1px rgba(0,0,0,0.6);
+    font-size: 28px;
+    line-height: 40px;
+    background: #355681;
+    background: rgba(53,86,129, 0.8);
+    border: 1px solid #fff;
+    padding: 5px 15px;
+    color: white;
+    border-radius: 0 10px 0 10px;
+    box-shadow: inset 0 0 5px rgba(53,86,129, 0.5);
+    font-family: 'Muli', sans-serif;
+  }
+</style>
+	<script>
+	   var select, store, profile, validate, memoryStore;
+	   require(["dojo/parser",
+               "dojo/_base/lang",
+               "dijit/registry",
+               "dojo/dom-construct",
+               "dojo/_base/array",
+               "dojo/request",
+               "dijit/form/Select",
+               "dojo/data/ObjectStore",
+               "dojo/data/ItemFileWriteStore",
+               "dojo/store/Memory",
+               "dojo/store/JsonRest",
+               "dojo/store/Observable",
+               "dojo/store/Cache",
+               "dojox/validate",
+               "dojox/validate/check",
+               "dojox/validate/web",
+               "dijit/form/Form",
+               "dijit/form/RadioButton",
+               "dojo/domReady!"
+     ], function (parser, lang, registry, domConstruct, array, request, Select, ObjectStore, ItemFileWriteStore, Memory, JsonRest, Observable, Cache, validate) {
+
+        var supeStore = new JsonRest({
+           target: "../getClaimsJSON.ashx?mode=init&ent=supe"
+        });
+
+        memoryStore = new Memory();
+        store = new Cache(supeStore, memoryStore);
+
+        select = new Select({
+           id: "supeSelect",
+           required: false,
+           name: "supervisor",
+           labelAttr: "label",
+           store: store,
+           style: "width:200px;"
+        }, "supeDropDown");
+        select.startup();
+        select.on("change", function () {
+           setSelectFields();
+        });
+     });
+
+     function setSelectFields() {
+
+        var record = store.get(dijit.byId('supeSelect').get('value'));
+
+        dijit.byId("title").set("value", record.title);
+        dijit.byId("first").set("value", record.first);
+        dijit.byId("middle").set("value", record.middle);
+        dijit.byId("last").set("value", record.last);
+        dijit.byId("email").set("value", record.email);
+     }
+
+     function newToggleState(radioVal) {
+
+        dojo.byId("response").innerHTML = "";
+     }
+	</script>
+</head>
+<body class="claro">
+
+<div id="formCenter">
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+  <div data-dojo-type="dijit/form/Form" encType="multipart/form-data" method="post" id="supeForm" data-dojo-id="supeForm">
+
+  <script type="dojo/on" data-dojo-event="reset">
+        return confirm('Press OK to reset widget values');
+    </script>
+
+    <script type="dojo/on" data-dojo-event="submit">
+    
+        var targetNode = dojo.byId("response");
+        var rBoxes = dojo.query("input:checked");
+        var id = dijit.byId('supeSelect').get('value');
+        var curr = dijit.byId('supeSelect').get('displayedValue');
+
+
+        var status;
+
+        var xhrArgs = {
+           url: "../getClaimsJSON.ashx",
+           form: dojo.byId("supeForm"),
+           handleAs: "text",
+           load: function (data) {
+              
+              switch(rBoxes[0].value) {
+                 case '1':
+                    status = "Information was successfully added to the database";
+                    break;
+                 case '2':
+                    if(id == "0")
+                       {
+                          status = "List is empty";
+                       }
+                    else
+                       {
+                          status = "Information was successfully updated in the database";
+                       }
+                    break;
+                 case '3':
+                    if(id == "0")
+                       {
+                          status = "List is empty";
+                       }
+                    else
+                       {
+                          status = "Information was successfully deleted in the database";
+                       }
+                   break;
+                }
+                targetNode.innerHTML = status;
+              },
+              error: function (error) {
+                 dojo.byId("response").innerHTML = "An unexpected error occurred: " + error;
+              }
+          }
+
+        if(rBoxes[0].value != '3') {
+           if(this.validate()){
+              var deferred = dojo.xhrGet(xhrArgs);
+           }
+           else  {
+               alert('Form is not completed.  Please review');
+               return false;
+           }
+        }
+        else  {
+              var deferred = dojo.xhrGet(xhrArgs);
+        }
+
+        select.setStore(store);
+        select.reset();
+        return false;        
+    </script>
+    <table align="center" id="formBox" cellspacing="10">
+
+        <tr>
+           <td colspan="2"><span class="desc">Edit Supervisor Info</span></td>
+        </tr>
+        <tr>
+           <td colspan="2"><div id="response">&nbsp;</div></td>
+        </tr>
+        <tr>
+            <td>
+                <label for="supeDropDownLabel">Full Name:</label>
+            </td>
+            <td>
+               <div id="supeDropDown"></div>
+            </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="titleLabel"><label for="title">Title:</label></div>
+           </td>
+           <td>
+                <div id="tbsupetitle"><input type="text" id="title" name="title" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="firstLabel"><label for="first">First:</label></div>
+           </td>
+           <td>
+                <div id="tbsupefirst"><input type="text" id="first" name="first" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="middleLabel"><label for="middle">Middle:</label></div>
+           </td>
+           <td>
+                <div id="tbsupemiddle"><input type="text" id="middle" name="middle" required="false" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lastLabel"><label for="last">Last:</label></div>
+           </td>
+           <td>
+                <div id="tbsupelast"><input type="text" id="last" name="last" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="emailLabel"><label for="email">Email:</label></div>
+           </td>
+           <td>
+                <div id="tbsupeemail"><input type="text" id="email" name="email" required="true" data-dojo-type="dijit/form/ValidationTextBox" validator="dojox.validate.isEmailAddress" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td colspan="2">
+           <br />
+              <input type="hidden" name="id" value="0" />
+              <input type="hidden" name="mode" value="admin" />
+              <input type="hidden" name="ent" value="supe" />
+              <input type="radio" data-dojo-type="dijit/form/RadioButton" name="action" id="rbAdd" value="1" checked="checked" onclick="newToggleState(this);"/> <label for="rbAdd">Add</label>&nbsp;&nbsp;
+              <input type="radio" data-dojo-type="dijit/form/RadioButton" name="action" id="rbUpdate" value="2" onclick="newToggleState(this);"/> <label for="rbUpdate">Update</label>&nbsp;&nbsp;
+              <input type="radio" data-dojo-type="dijit/form/RadioButton" name="action" id="rbDelete" value="3" onclick="newToggleState(this);"/> <label for="rbDelete">Delete</label>&nbsp;&nbsp;
+           <br /><br />
+           <button data-dojo-type="dijit/form/Button" type="submit" name="submitButton" value="Submit">Submit</button>
+           <button data-dojo-type="dijit/form/Button" type="reset">Reset</button>
+           </td>
+        </tr>
+    </table>
+  </div>
+</div>
+</body>
+</html>

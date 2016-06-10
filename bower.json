@@ -1,0 +1,29 @@
+{
+  "name": "Claims",
+  "description": "Claims website for Town of Southampton",
+  "main": "Default.aspx",
+  "moduleType": [],
+  "keywords": [
+    "Claims",
+    "Southampton",
+    "Schnabel"
+  ],
+  "authors": [
+    "John Daly GIS"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+     "bootstrap": "~3.3.5",
+     "font-awesome": "~4.6.0",
+     "angular": "~1.5.5"
+  }
+}

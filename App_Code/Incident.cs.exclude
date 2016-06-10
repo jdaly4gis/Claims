@@ -1,0 +1,202 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Web;
+
+/// <summary>
+/// Summary description for Incident
+/// </summary>
+public class Incident:AdminFunctions
+{
+   private string _incID;
+   private string _empID;
+   private string _doa;
+   private string _primeInjury;
+   private string _secondInjury;
+   private string _cause;
+   private string _description;
+   private string _supervisorID;
+   private string _returnWork;
+   private string _stopWork;
+   private string _returnTransitional;
+   private string _claimNumber;
+   private string _claimLocation;
+   private string _claimTime;
+   private string _claimType;
+   private string _INService;
+   private string _daysLost;
+   private string _Year;
+   private string _Month;
+   private string _Paid;
+   private string _FutureReserve;
+   private string _TotalIncurred;
+   private string _action;
+   private SqlCommand _query;
+   List<string>  _fields;
+   private HttpContext _context;
+
+	public Incident()
+	{
+		//
+		// TODO: Add constructor logic here
+		//
+	}
+
+   public Incident(string incID)
+	{
+      this._incID = incID;
+	}
+
+   public Incident(string incID, string name)
+	{
+
+	}
+
+	public Incident(HttpContext inVars)
+	{
+      List<string> _fields = new List<string>();
+
+      this._incID = inVars.Request["incidentNo"];
+      this._empID = inVars.Request["employee"];
+      this._doa = inVars.Request["accidentDate"];
+      this._primeInjury = inVars.Request["primInjury"];
+      this._secondInjury = inVars.Request["secInjury"];
+      this._cause = inVars.Request["cause"];
+      this._description = inVars.Request["description"];
+      this._supervisorID = inVars.Request["supervisor"];
+      this._returnWork = inVars.Request["returnDate"];
+      this._stopWork = inVars.Request["stopDate"];
+      this._returnTransitional = inVars.Request["retTransitionalDate"];
+      this._claimNumber = inVars.Request["incidentNo"];
+      this._claimLocation = inVars.Request["claimLocation"];
+      this._claimTime = inVars.Request["claimTime"];
+      this._claimType = inVars.Request["claimtype"];
+      this._INService = inVars.Request["INService"];
+      this._daysLost = inVars.Request["DaysLost"];
+      this._Year = inVars.Request["Year"];
+      this._Month = inVars.Request["Month"];
+      this._Paid = inVars.Request["Paid"];
+      this._FutureReserve = inVars.Request["FutureReserve"];
+      this._TotalIncurred = inVars.Request["TotalIncurred"];
+      this._action = inVars.Request["action"];
+      this._context = inVars;
+
+      
+      
+      if (this._action == "1")
+      {
+         this._query = this.Add();
+      }
+      else if (this._action == "2")
+      {
+         this._query = this.Update();
+      }
+      else
+      {
+         this._query = this.Delete(Convert.ToInt32(this._incID));
+      }
+	}
+
+   public int IncidentID
+   {
+      get { return Convert.ToInt32(_incID); }
+   }
+
+
+
+   public int IncidentAction
+   {
+      get { return Convert.ToInt32(_action); }
+   }
+
+   public SqlCommand GetSQLQuery
+   {
+      get { return this._query; }
+   }
+
+   public override SqlCommand Add()
+   {
+      String[] fields = { this._empID,this._doa, this._primeInjury,this._secondInjury,this._cause,this._description,this._supervisorID,this._returnWork,
+                            this._stopWork,this._returnTransitional,this._claimNumber,this._claimLocation,this._claimTime, this._claimType,this._INService,
+                            this._daysLost,this._Year,this._Month,this._Paid,this._FutureReserve,this._TotalIncurred };
+
+      this._fields = new List<string>();
+      string sql;
+      foreach (string s in fields)
+      {
+         string temp = s.Replace("'", "''");
+         this._fields.Add("'" + temp + "'");
+      }
+      sql = String.Join(",", this._fields.ToArray());
+
+      return (null);
+   }
+
+   public override string Add(string name)
+   {
+      return null;
+   }
+
+   public void DoLog(int isUpdate)
+   {
+      String[] fields = { this._claimNumber,this._Paid,this._FutureReserve,this._TotalIncurred};
+
+      List<string> temp = new List<string>();
+      string sql;
+      foreach (string s in fields)
+      {
+         string str = s.Replace("'", "''");
+         temp.Add("'" + str + "'");
+      }
+      sql = String.Join(",", temp.ToArray());
+
+      if (isUpdate == 1)
+      {
+         sql += ",0";
+      }
+      else
+      {
+         sql += ",1";         
+      }
+
+      string query = @"INSERT INTO IncurredLog(ClaimNumber, Paid, FutureReserve, TotalIncurred, IsUpdate) VALUES(" + sql + ")";
+      ClaimsAccess logger = new ClaimsAccess("claimsDB");
+      logger.RunSqlMethods("0", query);
+   }
+
+   public override string Update()
+   {
+      return (@"UPDATE Incident SET  EmployeeID='"   + this._empID + "'," +
+                                      "DateOfAccident='"  + this._doa + "'," +
+                                      "PrimaryInjury='"  + this._primeInjury + "'," +
+                                      "SecondaryInjury='" + this._secondInjury + "'," +
+                                      "Cause='"   + this._cause + "'," +
+                                      "Description='"   + this._description + "'," +
+                                      "Supervisor='"   + this._supervisorID + "'," +
+                                      "ReturnWork='"   + this._returnWork + "'," +
+                                      "StopWork='"   + this._stopWork + "'," +
+                                      "ReturnTransitional='"   + this._returnTransitional + "'," +
+                                      "ClaimNumber='"   + this._claimNumber + "'," +
+                                      "Location='"  + this._claimLocation + "'," +
+                                      "Time='"  + this._claimTime + "'," +
+                                      "ClaimType='"  + this._claimType + "'," +
+                                      "INService='"  + this._INService + "'," +
+                                      "Paid='"  + this._Paid + "'," +
+                                      "FutureReserve='"  + this._FutureReserve + "'," +
+                                      "TotalIncurred='"  + this._TotalIncurred + "' " +
+                                      "WHERE ClaimNumber ='" + this._incID + "'");
+   }
+
+   public override string Update(int id, string name)
+   {
+      return ("");
+   }
+
+   public override string Delete(int id)
+   {
+      return (@"DELETE FROM Incident WHERE ClaimNumber=" + this._incID);
+   }
+}

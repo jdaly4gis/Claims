@@ -1,0 +1,135 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Web;
+
+/// <summary>
+/// Summary description for Incident
+/// </summary>
+public class CorrectiveAction:AdminFunctions
+{
+   private string _incID;
+   private string _RecID;
+   private string _DateApplied;
+   private string _IssueDescription;
+   private string _CorrectiveAction;
+   private string _AdditionalAction;
+   private string _DateAchieved;
+
+   private string _action;
+   private SqlCommand _query;
+   List<string>  _fields;
+   private HttpContext _context;
+
+	public CorrectiveAction()
+	{
+		//
+		// TODO: Add constructor logic here
+		//
+	}
+
+   public CorrectiveAction(string incID)
+	{
+      this._incID = incID;
+	}
+
+   public CorrectiveAction(string incID, string name)
+	{
+
+	}
+
+	public CorrectiveAction(HttpContext inVars)
+	{
+      List<string> _fields = new List<string>();
+
+      this._RecID = inVars.Request["RecIDCA"];
+      this._incID = inVars.Request["IncNoCA"];
+      this._DateApplied = inVars.Request["DateApplied"];
+      this._IssueDescription = inVars.Request["IssueDescription"];
+      this._CorrectiveAction = inVars.Request["CorrectiveAction"];
+      this._AdditionalAction = inVars.Request["AdditionalAction"];
+      this._DateAchieved = inVars.Request["DateAchieved"];
+
+      this._action = inVars.Request["action"];
+      this._context = inVars;
+      
+      if (this._action == "1")
+      {
+         this._query = this.Add();
+      }
+      else if (this._action == "2")
+      {
+         this._query = this.Update();
+      }
+      else
+      {
+         this._query = this.Delete(Convert.ToInt32(this._incID));
+      }
+	}
+
+   public int IncidentID
+   {
+      get { return Convert.ToInt32(_incID); }
+   }
+
+
+
+   public int IncidentAction
+   {
+      get { return Convert.ToInt32(_action); }
+   }
+
+   public SqlCommand GetSQLQuery
+   {
+      get { return this._query; }
+   }
+
+   public override SqlCommand Add()
+   {
+      String[] fields = { this._incID, this._DateApplied, this._IssueDescription, this._CorrectiveAction, this._AdditionalAction, this._DateAchieved };
+      this._fields = new List<string>();
+      string sql;
+      foreach (string s in fields)
+      {
+         string temp = s.Replace("'", "''");
+         this._fields.Add("'" + temp + "'");
+      }
+      sql = String.Join(",", this._fields.ToArray());
+
+      return (null);
+   }
+
+   public override string Add(string name)
+   {
+      return (@"INSERT INTO CorrectiveAction VALUES('" + this.IncidentID + "'); SELECT SCOPE_IDENTITY()" );
+   }
+
+   public override string Update()
+   {
+
+      this._IssueDescription = this._IssueDescription.Replace("'", "''");
+      this._CorrectiveAction = this._CorrectiveAction.Replace("'", "''");
+      this._AdditionalAction = this._AdditionalAction.Replace("'", "''");
+
+      return (@"UPDATE CorrectiveAction SET  IncidentID='"   + this._incID + "'," +
+                                      "DateApplied='"  + this._DateApplied + "'," +
+                                      "IssueDescription='" + this._IssueDescription + "'," +
+                                      "CorrectiveAction='" + this._CorrectiveAction + "'," +
+                                      "AdditionalAction='" + this._AdditionalAction + "'," +
+                                      "DateAchieved='" + this._DateAchieved + "' " +
+                                      "WHERE ID ='" + this._RecID + "'");
+   }
+
+   public override string Update(int id, string name)
+   {
+      return ("");
+   }
+
+   public override string Delete(int id)
+   {
+      return (@"DELETE FROM CorrectiveAction WHERE ID=" + this._RecID);
+   }
+}

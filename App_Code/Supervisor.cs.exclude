@@ -1,0 +1,129 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
+
+/// <summary>
+/// Summary description for Supervisor
+/// </summary>
+public class Supervisor:AdminFunctions
+{
+   private string _supeID;
+   private string _title;
+   private string _last;
+   private string _first;
+   private string _middle;
+   private string _email;
+   private SqlCommand _query;
+   private string _action;
+
+   List<string>  _fields;
+   private HttpContext _context;
+
+	public Supervisor()
+	{
+		//
+		// TODO: Add constructor logic here
+		//
+	}
+
+   public Supervisor(string supeID)
+	{
+      this._supeID = supeID;
+	}
+
+	public Supervisor(string supeID, string name)
+	{
+
+	}
+
+	public Supervisor(HttpContext inVars)
+	{
+      List<string> _fields = new List<string>();
+
+      this._supeID = inVars.Request["supervisor"];
+      this._title = inVars.Request["title"];
+      this._first = inVars.Request["first"];
+      this._middle = inVars.Request["middle"];
+      this._last = inVars.Request["last"];
+      this._email = inVars.Request["email"];
+      this._action = inVars.Request["action"];
+      this._context = inVars;
+
+
+      if (this._action == "1")
+      {
+         this._query = this.Add();
+      }
+      else if (this._action == "2")
+      {
+         this._query = this.Update();
+      }
+      else
+      {
+         this._query = this.Delete(Convert.ToInt32(this._supeID));
+      }
+	}
+
+   public int SupervisorID
+   {
+      get { return Convert.ToInt32(_supeID); }
+   }
+
+   public string SupervisorName
+   {
+      get { return _last; }
+   }
+
+   public int SupervisorAction
+   {
+      get { return Convert.ToInt32(_action); }
+   }
+
+   public SqlCommand GetSQLQuery
+   {
+      get { return this._query; }
+   }
+
+   public override SqlCommand Add()
+   {
+
+      String[] fields = { this._title, this._first, this._middle, this._last, this._email };
+      this._fields = new List<string>();
+      string sql;
+      foreach (string s in fields)
+      {
+         this._fields.Add("'" + s + "'");
+      }
+      sql = String.Join(",", this._fields.ToArray());
+
+      return (@"INSERT INTO Supervisor VALUES(" + sql + "); SELECT SCOPE_IDENTITY()");
+   }
+
+   public override string Add(string name)
+   {
+      return (@"INSERT INTO Supervisor VALUES('" + this._title + "'); SELECT SCOPE_IDENTITY()" );
+   }
+
+   public override string Update()
+   {
+      return (@"UPDATE Supervisor SET Title='"   + this._title + "'," +
+                                      "First='"  + this._first + "'," +
+                                      "Middle='" + this._middle + "'," +
+                                      "Last='"   + this._last + "'," +
+                                      "Email='"  + this._email + "'" +
+                                      "WHERE ID ='" + this._supeID + "'");
+   }
+
+   public override string Update(int id, string name)
+   {
+      return (@"UPDATE Supervisor SET Name='"  + this._title  + "' WHERE ID=" + this._supeID);
+   }
+
+   public override string Delete(int id)
+   {
+      return (@"DELETE FROM Supervisor WHERE ID=" + this._supeID);
+   }
+}

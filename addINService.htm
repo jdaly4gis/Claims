@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+
+#formCenter
+{
+
+}   
+
+#formBox
+  {
+     text-align:center;
+     width:400px;
+     border: 0px solid #9f9f9f;
+  }
+
+#accDate
+  {  
+     width:200px;  
+  }    
+
+#empDropDown
+  {
+     text-align:left;
+  }
+  
+#responseINService
+  {
+     height:40px;
+  }   
+
+#fullname
+  {
+     text-align: center;
+     font-size: 16px;
+  }     
+  
+#results
+  {
+     text-align:center;
+     font-weight: normal;
+     font-family: 'Muli', sans-serif;
+     font-size: 14px;
+  }  
+
+.desc
+  {
+    font-weight: normal;
+    position: relative;
+    text-shadow: 0 -1px rgba(0,0,0,0.6);
+    font-size: 28px;
+    line-height: 40px;
+    background: #355681;
+    background: rgba(53,86,129, 0.8);
+    border: 1px solid #fff;
+    padding: 5px 15px;
+    color: white;
+    border-radius: 0 10px 0 10px;
+    box-shadow: inset 0 0 5px rgba(53,86,129, 0.5);
+    font-family: 'Muli', sans-serif;
+  }
+</style>
+	<script>
+	   var fs, select, store, profile, validate, memoryStore, dateStore, checkedStatus = "1";
+      require([
+               "dojo/parser",
+               "dojo/_base/declare",
+               "dojo/request",
+               "dojo/_base/lang",
+               "dijit/registry",
+               "dojo/dom-construct",
+               "dojo/_base/array",
+               "dijit/form/FilteringSelect",
+               "dijit/form/Select",
+               "dojo/data/ObjectStore",
+               "dojo/data/ItemFileWriteStore",
+               "dojo/store/Memory",
+               "dojo/store/JsonRest",
+               "dojo/store/Observable",
+               "dojo/store/Cache",
+               "dojox/validate",
+               "dojox/data/QueryReadStore",
+               "dojox/validate/check",
+               "dojox/validate/web",
+               "dijit/form/Form",
+               "dijit/form/RadioButton",
+               "dojo/domReady!"
+     ], function (parser, declare, request, lang, registry, domConstruct, arrayUtil, FilteringSelect, Select, ObjectStore, ItemFileWriteStore, Memory, JsonRest, Observable, Cache, validate, QueryReadStore) {
+
+        //Incident
+        declare("IncComboBoxReadStore", QueryReadStore, {
+           fetch: function (request) {
+              request.serverQuery = { q: request.query.ClaimNumber.replace("*", "%") };
+              return this.inherited("fetch", arguments);
+           }
+        });
+
+        dates = new Select({
+           id: "dateFilterIN",
+           store: dateStore,
+           labelAttr: "incidentNo",
+           style: "width:200px;"
+        }, "dateSelect");
+        dates.startup();
+
+        dates.on("change", function () {
+           initDate();
+        });
+     })
+
+     function initDate() {
+
+        var record = dateStore.get(dijit.byId('dateFilterIN').get('value'));
+//        console.log(record);
+        dijit.byId("RecIDIN").set("value", record.id);
+        dijit.byId("topic").set("value", record.Topic);
+        dijit.byId("INDate").set("value", record.INDate);
+        dijit.byId("instructor").set("value", record.Instructor);
+        dijit.byId("isCompleted").set("value", record.IsCompleted);
+     }
+
+
+     function SetSelectOptions() {
+     
+        require(["dojo/request", "dojo/store/Memory", ], function (request, Memory) {
+           var incID = dijit.byId("incdntFSIN").get("displayedValue");
+
+           dijit.byId("IncNoIN").set("value", incID);
+           dojo.byId("responseINService").innerHTML = "";
+
+           request.get("getClaimsJSON.ashx?mode=init&ent=INService&q=" + incID, { handleAs: "json" }).then(function (data) {
+              dateStore = new Memory({ data: data });
+              dates.setStore(dateStore);
+              initDate();
+           });
+        })
+     }
+
+
+        function newToggleState(radioVal) {
+           checkedStatus = radioVal.value;
+           dojo.byId("responseINService").innerHTML = "";
+        }
+</script>
+</head>
+<body class="claro">
+
+<div id="formCenter">
+
+<div data-dojo-type="dijit/form/Form" encType="multipart/form-data" method="post" id="INServiceForm" data-dojo-id="INServiceForm">
+
+  <script type="dojo/on" data-dojo-event="reset">
+        return confirm('Press OK to reset widget values');
+    </script>
+
+    <script type="dojo/on" data-dojo-event="submit">
+    
+        var targetNode = dojo.byId("responseINService");
+        var id = dijit.byId('incdntFSIN').get('value');
+
+        var status;
+
+        var xhrArgs = {
+           url: "getClaimsJSON.ashx",
+           form: dojo.byId("INServiceForm"),
+           handleAs: "text",
+           load: function (data) {
+
+              switch(checkedStatus) {
+                 case '1':
+                    dijit.byId("RecIDIN").set("value", data);
+                    status = "Information was successfully added to the database";
+                    break;
+                 case '2':
+                   if(id == "0")
+                      {
+                         status = "List is empty";
+                      }
+                      else
+                      {
+                         status = "Information was successfully updated in the database";
+                      }
+                      break;
+                  case '3':
+                     if(id == "0")
+                        {
+                           status = "List is empty";
+                        }
+                     else
+                        {
+                           status = "Information was successfully deleted in the database";
+                        }
+                   break;
+              }
+                 SetSelectOptions();
+                 targetNode.innerHTML = status;
+              },
+              error: function (error) {
+                 dojo.byId("responseINService").innerHTML = "An unexpected error occurred: " + error;
+              }
+           }
+
+           if(this.validate()) {
+              var deferred = dojo.xhrGet(xhrArgs);
+           }
+           else  {
+               alert('Form is not completed.  Please review');
+               return false;
+           }
+
+        return false;        
+    </script>
+    <table border="0" align="center" id="formBox" cellspacing="6">
+        <tr>
+            <td>
+                <label for="lblIncidentDropDown">Search Incident:</label>
+            </td>
+              <td align="left">
+                 <div data-dojo-type="IncComboBoxReadStore" data-dojo-id="store" data-dojo-props="url:'getClaimsJSON.ashx?mode=init&ent=incfilter', requestMethod:'get'"></div>
+               <input id="incdntFSIN" name="incident" data-dojo-type="dijit/form/FilteringSelect" data-dojo-props="store:store, searchAttr:'ClaimNumber', labelAttr:'ClaimNumber', pageSize:10" style="width:200px" onChange="SetSelectOptions()"/>
+            </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lblRecID"><label for="type">Record ID:</label></div>
+           </td>
+           <td align="left">
+                <div id="tblRecID"><input type="text" id="RecIDIN" name="RecIDIN" required="true" data-dojo-type="dijit/form/ValidationTextBox" data-dojo-props="'readonly':'readonly'" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lblIncNo"><label for="IncNo">Inc No:</label></div>
+           </td>
+           <td align="left">
+                <div id="tblIncNo"><input type="text" id="IncNoIN" name="IncNoIN" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" data-dojo-props="'readonly': 'readonly'" /></div>
+           </td>
+        </tr>
+          <tr>
+            <td>
+                <label for="incdntAccidentData">Date List:</label>
+            </td>
+            <td align="left">
+               <div id="dateSelect"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="incdntAccidentData">Date:</label>
+            </td>
+            <td align="left">
+               <div id="lblINDate"><input type="text" name="INDate" id="INDate" data-dojo-type="dijit/form/DateTextBox" required="true"/></div>
+            </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lblTopic"><label for="topic">Topic:</label></div>
+           </td>
+           <td align="left">
+                <div id="tblTopic"><input type="text" id="topic" name="topic" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+           </td>
+        <tr>
+           <td>
+              <div id="lblInstructor"><label for="topic">Instructor:</label></div>
+           </td>
+           <td align="left">
+                <div id="tblInstructor"><input type="text" id="instructor" name="instructor" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lblisCompleted"><label for="isCompleted">Is Completed:</label></div>
+           </td>
+         <td align="left">
+            <select id="isCompleted" name="isCompleted" data-dojo-type="dijit/form/Select" style="width:60px;">
+               <option value="False">No</option>
+               <option value="True">Yes</option>
+            </select>
+         </td>
+        </tr>
+        <tr>
+           <td colspan="2"><div id="responseINService">&nbsp;</div></td>
+        </tr>
+        
+        <tr>
+           <td colspan="2">
+              <input type="hidden" name="mode" value="admin" />
+              <input type="hidden" name="ent" value="INService" />
+              <input type="radio" data-dojo-type="dijit/form/RadioButton" name="action" id="rbAddINService" value="1" checked="checked" onclick="newToggleState(this);"/> <label for="rbAdd">Add</label>&nbsp;&nbsp;
+              <input type="radio" data-dojo-type="dijit/form/RadioButton" name="action" id="rbUpdateINService" value="2" onclick="newToggleState(this);"/> <label for="rbUpdate">Update</label>&nbsp;&nbsp;
+              <input type="radio" data-dojo-type="dijit/form/RadioButton" name="action" id="rbDeleteINService" value="3" onclick="newToggleState(this);"/> <label for="rbDelete">Delete</label>&nbsp;&nbsp;
+           <br /><br />
+           <button data-dojo-type="dijit/form/Button" type="submit" name="submitButton" value="Submit">Submit</button>
+           <button data-dojo-type="dijit/form/Button" type="reset">Reset</button>
+           </td>
+        </tr>
+    </table>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,316 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+
+#formCenter
+{
+
+}   
+
+#formBox
+  {
+     text-align:center;
+     width:400px;
+     border: 0px solid #9f9f9f;
+  }
+
+#accDate
+  {  
+     width:200px;  
+  }    
+
+#empDropDown
+  {
+     text-align:left;
+  }
+  
+#responseWitness
+  {
+     height:40px;
+  }   
+
+#fullname
+  {
+     text-align: center;
+     font-size: 16px;
+  }     
+  
+#results
+  {
+     text-align:center;
+     font-weight: normal;
+     font-family: 'Muli', sans-serif;
+     font-size: 14px;
+  }  
+
+.desc
+  {
+    font-weight: normal;
+    position: relative;
+    text-shadow: 0 -1px rgba(0,0,0,0.6);
+    font-size: 28px;
+    line-height: 40px;
+    background: #355681;
+    background: rgba(53,86,129, 0.8);
+    border: 1px solid #fff;
+    padding: 5px 15px;
+    color: white;
+    border-radius: 0 10px 0 10px;
+    box-shadow: inset 0 0 5px rgba(53,86,129, 0.5);
+    font-family: 'Muli', sans-serif;
+  }
+</style>
+	<script>
+	   var fs, dates, select, store, profile, validate, memoryStore, incdntStore,dateStore,checkedStatus = "1";
+	   require(
+              [
+               "dojo/parser",
+               "dojo/_base/declare",
+               "dojo/_base/lang",
+               "dijit/registry",
+               "dojo/dom-construct",
+               "dojo/_base/array",
+               "dojo/request",
+               "dijit/form/FilteringSelect",
+               "dijit/form/Select",
+               "dojo/data/ObjectStore",
+               "dojo/data/ItemFileWriteStore",
+               "dojo/store/Memory",
+               "dojo/store/JsonRest",
+               "dojo/store/Observable",
+               "dojo/store/Cache",
+               "dojox/validate",
+               "dojox/data/QueryReadStore",
+               "dojox/validate/check",
+               "dojox/validate/web",
+               "dijit/form/Form",
+               "dijit/form/RadioButton",
+               "dojo/domReady!"
+     ], function (parser, declare, lang, registry, domConstruct, array, request, FilteringSelect, Select, ObjectStore, ItemFileWriteStore, Memory, JsonRest, Observable, Cache, validate, QueryReadStore) {
+
+        //Incident
+        declare("WitComboBoxReadStore", QueryReadStore, {
+           fetch: function (request) {
+              request.serverQuery = { q: request.query.ClaimNumber.replace("*", "%") };
+              return this.inherited("fetch", arguments);
+           }
+        });
+
+        dates = new Select({
+           id: "dateFilterWitness",
+           store: dateStore,
+           labelAttr: "Name",
+           style: "width:200px;"
+        }, "witnessSelect");
+        dates.startup();
+
+        dates.on("change", function () {
+           initDate();
+        });
+     })
+
+     function initDate() {
+
+        var record = dateStore.get(dijit.byId('dateFilterWitness').get('value'));
+        //console.log(record);
+        dijit.byId("RecIDWitness").set("value", record.id);
+        dijit.byId("WitnessName").set("value", record.Name);
+        dijit.byId("WitnessAddress").set("value", record.Address);
+        dijit.byId("WitnessPhone").set("value", record.Phone);
+        dijit.byId("WitnessZip").set("value", record.Zip);
+        dijit.byId("WitnessEmail").set("value", record.Email);
+     }
+
+
+     function SetSelectOptions() {
+
+        require(["dojo/request", "dojo/store/Memory", ], function (request, Memory) {
+           var incID = dijit.byId("incdntFSWitness").get("displayedValue");
+
+           dijit.byId("IncNoWitness").set("value", incID);
+           dojo.byId("responseWitness").innerHTML = "";
+
+           request.get("getClaimsJSON.ashx?mode=init&ent=witness&q=" + incID, { handleAs: "json" }).then(function (data) {
+              dateStore = new Memory({ data: data });
+              dates.setStore(dateStore);
+              initDate();
+           });
+        })
+     }
+     
+     function newToggleState(radioVal) {
+
+        checkedStatus = radioVal.value;
+        dojo.byId("responseWitness").innerHTML = "";
+     }
+
+</script>
+
+    
+</head>
+<body class="claro">
+
+<div id="formCenter">
+
+  <div data-dojo-type="dijit/form/Form" encType="multipart/form-data" method="post" id="WitnessForm" data-dojo-id="WitnessForm">
+
+  <script type="dojo/on" data-dojo-event="reset">
+        return confirm('Press OK to reset widget values');
+    </script>
+
+    <script type="dojo/on" data-dojo-event="submit">
+    
+        var targetNode = dojo.byId("responseWitness");
+        
+        var id = dijit.byId('incdntFSWitness').get('value');
+        var status;
+
+        var xhrArgs = {
+           url: "getClaimsJSON.ashx",
+           form: dojo.byId("WitnessForm"),
+           handleAs: "text",
+           load: function (data) {
+
+              switch(checkedStatus) {
+                 case '1':
+                    dijit.byId("RecIDWitness").set("value", data);
+                    status = "Information was successfully added to the database";
+                    break;
+                 case '2':
+                   if(id == "0")
+                      {
+                         status = "List is empty";
+                      }
+                      else
+                      {
+                         status = "Information was successfully updated in the database";
+                      }
+                      break;
+                  case '3':
+                     if(id == "0")
+                        {
+                           status = "List is empty";
+                        }
+                     else
+                        {
+                           status = "Information was successfully deleted in the database";
+                        }
+                   break;
+              }
+
+              SetSelectOptions();
+              targetNode.innerHTML = status;
+              },
+              error: function (error) {
+                 dojo.byId("responseWitness").innerHTML = "An unexpected error occurred: " + error;
+              }
+           }
+
+           if(this.validate()){
+              var deferred = dojo.xhrGet(xhrArgs);
+           }
+           else  {
+               alert('Form is not completed.  Please review');
+               return false;
+           }
+
+//        fs.set('store', incdntStore);
+//        fs.reset();
+        return false;        
+    </script>
+    <table border="0" align="center" id="formBox" cellspacing="6">
+        <tr>
+            <td>
+                <label for="lblIncidentDropDown">Search Incident:</label>
+            </td>
+            <td align="left">
+                 <div data-dojo-type="WitComboBoxReadStore" data-dojo-id="store" data-dojo-props="url:'getClaimsJSON.ashx?mode=init&ent=incfilter', requestMethod:'get'"></div>
+               <input id="incdntFSWitness" name="incident" data-dojo-type="dijit/form/FilteringSelect" data-dojo-props="store:store, searchAttr:'ClaimNumber', labelAttr:'ClaimNumber', pageSize:10" style="width:200px" onChange="SetSelectOptions()"/>
+            </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lblRecID"><label for="type">Record ID:</label></div>
+           </td>
+           <td align="left">
+                <div id="tblRecID"><input type="text" id="RecIDWitness" name="RecIDWitness" required="true" data-dojo-type="dijit/form/ValidationTextBox" data-dojo-props="'readonly':'readonly'" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lblIncNo"><label for="type">Inc No:</label></div>
+           </td>
+           <td align="left">
+                <div id="tblIncNo"><input type="text" id="IncNoWitness" name="IncNoWitness" required="true" data-dojo-type="dijit/form/ValidationTextBox" data-dojo-props="'readonly':'readonly'" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="incdntWitness">Witness List:</label>
+            </td>
+            <td align="left">
+               <div id="witnessSelect"></div>
+            </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lblWitnessName"><label for="type">Name:</label></div>
+           </td>
+           <td align="left">
+                <div id="tblWitnessName"><input type="text" id="WitnessName" name="WitnessName" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lblWitnessAddress"><label for="type">Address:</label></div>
+           </td>
+           <td align="left">
+                <div id="tblWitnessAddress"><input type="text" id="WitnessAddress" name="WitnessAddress" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lblWitnessPhone"><label for="type">Phone:</label></div>
+           </td>
+           <td align="left">
+                <div id="tblWitnessPhone"><input type="text" id="WitnessPhone" name="WitnessPhone" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lblWitnessZip"><label for="type">Zip:</label></div>
+           </td>
+           <td align="left">
+                <div id="tblWitnessZip"><input type="text" id="WitnessZip" name="WitnessZip" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lblWitnessEmail"><label for="type">Email:</label></div>
+           </td>
+           <td align="left">
+                <div id="tblWitnessEmail"><input type="text" id="WitnessEmail" name="WitnessEmail" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td colspan="2"><div id="responseWitness">&nbsp;</div></td>
+        </tr>
+        
+        <tr>
+           <td colspan="2">
+              <input type="hidden" name="mode" value="admin" />
+              <input type="hidden" name="ent" value="PostWitness" />
+              <input type="radio" data-dojo-type="dijit/form/RadioButton" name="action" id="rbAddWitness" value="1" checked="checked" onclick="newToggleState(this);"/> <label for="rbAddWitness">Add</label>&nbsp;&nbsp;
+              <input type="radio" data-dojo-type="dijit/form/RadioButton" name="action" id="rbUpdateWitness" value="2" onclick="newToggleState(this);"/> <label for="rbUpdateWitness">Update</label>&nbsp;&nbsp;
+              <input type="radio" data-dojo-type="dijit/form/RadioButton" name="action" id="rbDeleteWitness" value="3" onclick="newToggleState(this);"/> <label for="rbDeleteWitness">Delete</label>&nbsp;&nbsp;
+           <br /><br />
+           <button data-dojo-type="dijit/form/Button" type="submit" name="submitButton" value="Submit">Submit</button>
+           <button data-dojo-type="dijit/form/Button" type="reset">Reset</button>
+           </td>
+        </tr>
+    </table>
+  </div>
+</div>
+</body>
+</html>

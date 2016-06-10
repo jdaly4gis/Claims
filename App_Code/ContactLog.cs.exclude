@@ -1,0 +1,130 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Data.SqlClient;
+using System.Text.RegularExpressions;
+using System.Web;
+
+/// <summary>
+/// Summary description for Incident
+/// </summary>
+public class ContactLog:AdminFunctions
+{
+   private string _incID;
+   private string _RecID;
+   private string _Date;
+   private string _FollowDate;
+   private string _Notes;
+   private string _Type;
+
+   private string _action;
+   private SqlCommand _query;
+   List<string>  _fields;
+   private HttpContext _context;
+
+	public ContactLog()
+	{
+		//
+		// TODO: Add constructor logic here
+		//
+	}
+
+   public ContactLog(string incID)
+	{
+      this._incID = incID;
+	}
+
+   public ContactLog(string incID, string name)
+	{
+
+	}
+
+	public ContactLog(HttpContext inVars)
+	{
+      List<string> _fields = new List<string>();
+
+      this._RecID = inVars.Request["RecID"];
+      this._incID = inVars.Request["IncNo"];
+      this._Date = inVars.Request["ConDate"];
+      this._FollowDate = inVars.Request["FollowConDate"];
+      this._Notes = inVars.Request["Notes"];
+      this._Type = inVars.Request["Type"];
+
+      this._action = inVars.Request["action"];
+      this._context = inVars;
+      
+      if (this._action == "1")
+      {
+         this._query = this.Add();
+      }
+      else if (this._action == "2")
+      {
+         this._query = this.Update();
+      }
+      else
+      {
+         this._query = this.Delete(Convert.ToInt32(this._incID));
+      }
+	}
+
+   public int IncidentID
+   {
+      get { return Convert.ToInt32(_incID); }
+   }
+
+
+
+   public int IncidentAction
+   {
+      get { return Convert.ToInt32(_action); }
+   }
+
+   public SqlCommand GetSQLQuery
+   {
+      get { return this._query; }
+   }
+
+   public override SqlCommand Add()
+   {
+      String[] fields = { this._incID, this._Date, this._FollowDate, this._Notes, this._Type };
+      this._fields = new List<string>();
+      string sql;
+      foreach (string s in fields)
+      {
+         string temp = s.Replace("'", "''");
+         this._fields.Add("'" + temp + "'");
+      }
+      sql = String.Join(",", this._fields.ToArray());
+
+      return (null);
+   }
+
+   public override string Add(string name)
+   {
+      return (@"INSERT INTO ContactLog VALUES('" + this.IncidentID + "'); SELECT SCOPE_IDENTITY()" );
+   }
+
+   public override string Update()
+   {
+      this._Notes = this._Notes.Replace("'", "''");
+      this._Type = this._Type.Replace("'", "''");
+
+      return (@"UPDATE ContactLog SET  IncidentID='"   + this._incID + "'," +
+                                      "Date='"  + this._Date + "'," +
+                                      "FollowUp='" + this._FollowDate + "'," +
+                                      "Notes='"   + this._Notes + "'," +
+                                      "Type='" + this._Type + "' " +
+                                      "WHERE ID ='" + this._RecID + "'");
+   }
+
+   public override string Update(int id, string name)
+   {
+      return ("");
+   }
+
+   public override string Delete(int id)
+   {
+      return (@"DELETE FROM ContactLog WHERE ID=" + this._RecID);
+   }
+}

@@ -1,0 +1,195 @@
+﻿    <!DOCTYPE HTML">
+    <html>
+    <head>
+    <title>Claims Editor</title>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+          <link rel="Stylesheet" type="text/css" href="js/dojo/resources/dojo.css" />
+          <link rel="Stylesheet" type="text/css" href="js/dijit/themes/claro/claro.css" />
+          <link rel="Stylesheet" type="text/css" href="js/dijit/themes/claro/document.css" />
+          <link rel="Stylesheet" type="text/css" href="js/gridx/resources/claro/Gridx.css" />
+          
+          <style type="text/css">
+
+            body  {
+              background-color:#ccffff;
+            }
+
+            .grid {
+               height: 800px;
+               width:  1600px;
+               margin-left:200px;
+               margin-right:200px;  
+               margin-top:40px;                   
+               border:8px solid;
+               background-color:#000000;
+               border-radius:6px;
+               background-color:#ccffff;
+            }
+            
+            #gridContainer  {
+               background-color:none;
+            }
+            #govQuery  {
+               font-family:Verdana;
+               font-size:12px;               
+               font-weight:bold;                              
+               color:#333366;
+            }
+
+            h1 {
+              color:brown;
+              font-family:Arial;
+              font-size:36px;
+              line-height:36px;
+              text-align:center;
+           }
+
+           hr {
+              border: 0;
+              height: 0;
+              border-top: 1px solid rgba(0, 0, 0, 0.1);
+              border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+           }
+
+           #details {
+             font-size:8pt;
+          }
+
+           #config  {
+ 			    width: 300px; 
+			    height: 400px; 
+			    float: left;
+          }
+
+          </style>
+
+          <script src = "js/util/dodUtils.js"></script>
+          <script src = "js/util/selectInfo.js"></script>
+
+          <script>
+             require([
+             'dojo/dom',
+             'dojo/parser',
+             'dojo/request',
+             'dojo/store/Memory',
+             'dojox/widget/Standby',
+             'dojox/data/QueryReadStore',
+             'gridx/Grid',
+             'gridx/allModules',
+             'dijit/registry',
+             'dijit/layout/BorderContainer',
+             'dijit/layout/ContentPane',
+             'dijit/Dialog',
+             'gridx/core/model/cache/Sync',
+             'gridx/core/model/cache/Async',
+             'dijit/Menu',
+             'dijit/MenuItem',
+             'dijit/PopupMenuItem',
+             'dijit/CheckedMenuItem',
+             'dijit/MenuSeparator',
+             'dijit/form/CheckBox',
+             'dojox/layout/TableContainer',
+             'dojo/domReady!'
+             ], function (dom, parser, request, Memory, Standby, QueryReadStore, Grid, modules) {
+
+                /*
+                var ctype = new dijit.form.Button({
+                label: "Update Grid",
+                onClick: function () {
+                updateGrid();
+                }
+                }).placeAt('UpdateButton');
+                */
+                var url = "getClaimsJSON.ashx?mode=init&ent=Grid";
+                request.get(url, { handleAs: "json" }).then(function (data) {
+
+                   window.detailProvider = window.asyncDetailProvider = function (grid, rowId, detailNode, renderred) {
+                      setContent(grid, rowId, detailNode);
+                      window.setTimeout(function () {
+                         renderred.callback();
+                      }, 2000);
+                      return renderred;
+                   }
+
+                   store = new Memory({ data: data });
+
+                   layout = [
+                   { field: 'ClaimNumber', width: "80px", name: 'Claim' },
+                   { field: 'Location', width: "150px", name: 'Location' },
+                   { field: 'EmployeeID', width: "80px", name: 'Employee' },
+                   { field: 'PrimaryInjury', width: "150px", name: 'Primary Injury' },
+                   { field: 'SecondaryInjury', width: "150px", name: 'SecondaryInjury' },
+                   { field: 'Cause', width: "150px", name: 'Cause' },
+                   { field: 'Description', width: "150px", name: 'Description' },
+                   { field: 'DateOfAccident', width: "100px", name: 'Date of Accident' },
+                   { field: 'StopWork', width: "100px", name: 'Stop Work' },
+                   { field: 'ReturnTransitional', width: "100px", name: 'Transitional' },
+                   { field: 'ReturnTransitional', width: "100px", name: 'Transitional' },
+                   { field: 'FutureReserve', width: "100px", name: 'Future Reserve' },
+                   { field: 'TotalIncurred', width: "100px", name: 'Total Incurred' }
+                   ];
+
+                   mods = [
+                   {
+                      moduleClass: modules.Dod,
+                      detailProvider: detailProvider
+                   },
+                   modules.VirtualVScroller,
+                   modules.Pagination,
+                   modules.PaginationBar,
+                   modules.Focus,
+                   modules.Filter,
+                   modules.QuickFilter,
+                   modules.FilterBar,
+                   modules.Bar,
+                   modules.ColumnResizer,
+                   modules.SingleSort,
+                   modules.RowHeader,
+                   modules.ExtendedSelectCell,
+                   modules.ExtendedSelectColumn,
+                   modules.ExtendedSelectRow,
+                   modules.HiddenColumns,
+                   modules.MoveRow,
+                   modules.MoveColumn,
+                   modules.DndRow,
+                   modules.DndColumn,
+                   modules.Menu
+                   ];
+
+
+                   var grid = new Grid({
+                      store: store,
+                      cacheClass: 'gridx/core/model/cache/Async',
+                      structure: layout,
+                      paginationInitialPageSize: 20,
+                      selectRowTriggerOnCell: true,
+                      modules: mods,
+                      style: "width:100%;height:90%;"
+                   });
+
+                   grid.placeAt("gridContainer");
+                   grid.startup();
+
+                   var menu = dijit.byId('row-selectedMenu');
+                   //                   grid.menu.bind(menu, { hookPoint: 'row', selected: true });
+                });
+             });
+
+             function updateGrid() {
+                grid.model.clearCache();
+                grid.model.store.setData(items);
+                grid.body.refresh();
+             }
+		    </script>
+    </head>
+    <body class="claro">
+
+    			<div id="gridContainer"></div>
+
+      <div data-dojo-type="dijit.Menu" id="row-selectedMenu"  style="display: none;">
+		<div data-dojo-type="dijit.MenuItem" onclick='showInfo("initQuery")'>Show Govern Queries</div>
+	</div>
+   
+  </body>
+  </html>                 

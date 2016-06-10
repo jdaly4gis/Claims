@@ -1,0 +1,316 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+
+#formCenter
+{
+
+}   
+
+#formBox
+  {
+     text-align:center;
+     width:400px;
+     border: 0px solid #9f9f9f;
+  }
+
+#accDate
+  {  
+     width:200px;  
+  }    
+
+#empDropDown
+  {
+     text-align:left;
+  }
+  
+#responseTraining
+  {
+     height:40px;
+  }   
+
+#fullname
+  {
+     text-align: center;
+     font-size: 16px;
+  }     
+  
+#results
+  {
+     text-align:center;
+     font-weight: normal;
+     font-family: 'Muli', sans-serif;
+     font-size: 14px;
+  }  
+
+.desc
+  {
+    font-weight: normal;
+    position: relative;
+    text-shadow: 0 -1px rgba(0,0,0,0.6);
+    font-size: 28px;
+    line-height: 40px;
+    background: #355681;
+    background: rgba(53,86,129, 0.8);
+    border: 1px solid #fff;
+    padding: 5px 15px;
+    color: white;
+    border-radius: 0 10px 0 10px;
+    box-shadow: inset 0 0 5px rgba(53,86,129, 0.5);
+    font-family: 'Muli', sans-serif;
+  }
+</style>
+	<script>
+	   var fs, tselect, select, store, profile, validate, memoryStore, incdntStore,dateStore,checkedStatus = "1";
+	   require(
+              [
+               "dojo/parser",
+               "dojo/_base/declare",
+               "dojo/_base/lang",
+               "dijit/registry",
+               "dojo/dom-construct",
+               "dojo/_base/array",
+               "dojo/request",
+               "dijit/form/FilteringSelect",
+               "dijit/form/Select",
+               "dojo/data/ObjectStore",
+               "dojo/data/ItemFileWriteStore",
+               "dojo/store/Memory",
+               "dojo/store/JsonRest",
+               "dojo/store/Observable",
+               "dojo/store/Cache",
+               "dojox/validate",
+               "dojox/data/QueryReadStore",
+               "dojox/validate/check",
+               "dojox/validate/web",
+               "dijit/form/Form",
+               "dijit/form/RadioButton",
+               "dojo/domReady!"
+     ], function (parser, declare, lang, registry, domConstruct, array, request, FilteringSelect, Select, ObjectStore, ItemFileWriteStore, Memory, JsonRest, Observable, Cache, validate, QueryReadStore) {
+
+        //Incident
+        declare("IncComboBoxReadStore", QueryReadStore, {
+           fetch: function (request) {
+              request.serverQuery = { q: request.query.ClaimNumber.replace("*", "%") };
+              return this.inherited("fetch", arguments);
+           }
+        });
+
+        tselect = new Select({
+           id: "dateFilterTraining",
+           store: dateStore,
+           labelAttr: "Name",
+           style: "width:200px;"
+        }, "trainingSelect");
+        tselect.startup();
+
+        tselect.on("change", function () {
+           initDate();
+        });
+     })
+
+     function initDate() {
+
+        var record = dateStore.get(dijit.byId('dateFilterTraining').get('value'));
+        //console.log(record);
+        dijit.byId("RecIDTraining").set("value", record.id);
+        dijit.byId("TrainingName").set("value", record.Name);
+        dijit.byId("TrainingDate").set("value", record.Date);
+        dijit.byId("TrainingTime").set("value", record.Time);
+        dijit.byId("TrainingLocation").set("value", record.Location);
+        dijit.byId("Trainer").set("value", record.Trainer);
+     }
+
+
+     function SetSelectOptions() {
+
+        require(["dojo/request", "dojo/store/Memory", ], function (request, Memory) {
+           var incID = dijit.byId("incdntFSTraining").get("displayedValue");
+
+           dijit.byId("IncNoTraining").set("value", incID);
+           dojo.byId("responseTraining").innerHTML = "";
+
+           request.get("getClaimsJSON.ashx?mode=init&ent=training&q=" + incID, { handleAs: "json" }).then(function (data) {
+              dateStore = new Memory({ data: data });
+              tselect.setStore(dateStore);
+              initDate();
+           });
+        })
+     }
+     
+     function newToggleState(radioVal) {
+
+        checkedStatus = radioVal.value;
+        dojo.byId("responseTraining").innerHTML = "";
+     }
+
+</script>
+
+    
+</head>
+<body class="claro">
+
+<div id="formCenter">
+
+  <div data-dojo-type="dijit/form/Form" encType="multipart/form-data" method="post" id="TrainingForm" data-dojo-id="TrainingForm">
+
+  <script type="dojo/on" data-dojo-event="reset">
+        return confirm('Press OK to reset widget values');
+    </script>
+
+    <script type="dojo/on" data-dojo-event="submit">
+    
+        var targetNode = dojo.byId("responseTraining");
+        
+        var id = dijit.byId('incdntFSTraining').get('value');
+        var status;
+
+        var xhrArgs = {
+           url: "getClaimsJSON.ashx",
+           form: dojo.byId("TrainingForm"),
+           handleAs: "text",
+           load: function (data) {
+
+              switch(checkedStatus) {
+                 case '1':
+                    dijit.byId("RecIDTraining").set("value", data);
+                    status = "Information was successfully added to the database";
+                    break;
+                 case '2':
+                   if(id == "0")
+                      {
+                         status = "List is empty";
+                      }
+                      else
+                      {
+                         status = "Information was successfully updated in the database";
+                      }
+                      break;
+                  case '3':
+                     if(id == "0")
+                        {
+                           status = "List is empty";
+                        }
+                     else
+                        {
+                           status = "Information was successfully deleted in the database";
+                        }
+                   break;
+              }
+
+              SetSelectOptions();
+              targetNode.innerHTML = status;
+              },
+              error: function (error) {
+                 dojo.byId("responseTraining").innerHTML = "An unexpected error occurred: " + error;
+              }
+           }
+
+           if(this.validate()){
+              var deferred = dojo.xhrGet(xhrArgs);
+           }
+           else  {
+               alert('Form is not completed.  Please review');
+               return false;
+           }
+
+//        fs.set('store', incdntStore);
+//        fs.reset();
+        return false;        
+    </script>
+    <table border="0" align="center" id="formBox" cellspacing="6">
+        <tr>
+            <td>
+                <label for="lblIncidentDropDown">Search Incident:</label>
+            </td>
+            <td align="left">
+                 <div data-dojo-type="IncComboBoxReadStore" data-dojo-id="store" data-dojo-props="url:'getClaimsJSON.ashx?mode=init&ent=incfilter', requestMethod:'get'"></div>
+               <input id="incdntFSTraining" name="incident" data-dojo-type="dijit/form/FilteringSelect" data-dojo-props="store:store, searchAttr:'ClaimNumber', labelAttr:'ClaimNumber', pageSize:10" style="width:200px" onChange="SetSelectOptions()"/>
+            </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lblRecID"><label for="type">Record ID:</label></div>
+           </td>
+           <td align="left">
+                <div id="tblRecID"><input type="text" id="RecIDTraining" name="RecIDTraining" required="true" data-dojo-type="dijit/form/ValidationTextBox" data-dojo-props="'readonly':'readonly'" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lblIncNo"><label for="type">Inc No:</label></div>
+           </td>
+           <td align="left">
+                <div id="tblIncNo"><input type="text" id="IncNoTraining" name="IncNoTraining" required="true" data-dojo-type="dijit/form/ValidationTextBox" data-dojo-props="'readonly':'readonly'" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="incdntAccidentData">Training List:</label>
+            </td>
+            <td align="left">
+               <div id="trainingSelect"></div>
+            </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lblTrainingName"><label for="type">Name:</label></div>
+           </td>
+           <td align="left">
+                <div id="tblTrainingName"><input type="text" id="TrainingName" name="TrainingName" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="lblTrainingDate">Date:</label>
+            </td>
+            <td align="left">
+               <div id="tbTrainingDate"><input type="text" name="TrainingDate" id="TrainingDate" data-dojo-type="dijit/form/DateTextBox" required="true"/></div>
+            </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lblTrainingTime"><label for="type">Time:</label></div>
+           </td>
+           <td align="left">
+                <div id="tblTrainingTime"><input type="text" id="TrainingTime" name="TrainingTime" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lblTrainingLocation"><label for="type">Location:</label></div>
+           </td>
+           <td align="left">
+                <div id="tblTrainingLocation"><input type="text" id="TrainingLocation" name="TrainingLocation" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lblTraininer"><label for="type">Trainer:</label></div>
+           </td>
+           <td align="left">
+                <div id="tblTrainer"><input type="text" id="Trainer" name="Trainer" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td colspan="2"><div id="responseTraining">&nbsp;</div></td>
+        </tr>
+
+        <tr>
+           <td colspan="2">
+              <input type="hidden" name="mode" value="admin" />
+              <input type="hidden" name="ent" value="Train" />
+              <input type="radio" data-dojo-type="dijit/form/RadioButton" name="action" id="rbAddTraining" value="1" checked="checked" onclick="newToggleState(this);"/> <label for="rbAddTraining">Add</label>&nbsp;&nbsp;
+              <input type="radio" data-dojo-type="dijit/form/RadioButton" name="action" id="rbUpdateTraining" value="2" onclick="newToggleState(this);"/> <label for="rbUpdateTraining">Update</label>&nbsp;&nbsp;
+              <input type="radio" data-dojo-type="dijit/form/RadioButton" name="action" id="rbDeleteTraining" value="3" onclick="newToggleState(this);"/> <label for="rbDeleteTraining">Delete</label>&nbsp;&nbsp;
+           <br /><br />
+           <button data-dojo-type="dijit/form/Button" type="submit" name="submitButton" value="Submit">Submit</button>
+           <button data-dojo-type="dijit/form/Button" type="reset">Reset</button>
+           </td>
+        </tr>
+    </table>
+  </div>
+</div>
+</body>
+</html>

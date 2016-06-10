@@ -1,0 +1,134 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Web;
+
+/// <summary>
+/// Summary description for Incident
+/// </summary>
+public class Training:AdminFunctions
+{
+   private string _incID;
+   private string _RecID;
+   private string _Name;
+   private string _Date;
+   private string _Time;
+   private string _Location;
+   private string _Trainer;
+
+   private string _action;
+   private SqlCommand _query;
+   List<string>  _fields;
+   private HttpContext _context;
+
+	public Training()
+	{
+		//
+		// TODO: Add constructor logic here
+		//
+	}
+
+   public Training(string incID)
+	{
+      this._incID = incID;
+	}
+
+   public Training(string incID, string name)
+	{
+
+	}
+
+	public Training(HttpContext inVars)
+	{
+      List<string> _fields = new List<string>();
+
+      this._RecID = inVars.Request["RecIDTraining"];
+      this._incID = inVars.Request["IncNoTraining"];
+      this._Name = inVars.Request["TrainingName"];
+      this._Date = inVars.Request["TrainingDate"];
+      this._Time = inVars.Request["TrainingTime"];
+      this._Location = inVars.Request["TrainingLocation"];
+      this._Trainer = inVars.Request["Trainer"];
+
+      this._action = inVars.Request["action"];
+      this._context = inVars;
+      
+      if (this._action == "1")
+      {
+         this._query = this.Add();
+      }
+      else if (this._action == "2")
+      {
+         this._query = this.Update();
+      }
+      else
+      {
+         this._query = this.Delete(Convert.ToInt32(this._incID));
+      }
+	}
+
+   public int IncidentID
+   {
+      get { return Convert.ToInt32(_incID); }
+   }
+
+
+
+   public int IncidentAction
+   {
+      get { return Convert.ToInt32(_action); }
+   }
+
+   public SqlCommand GetSQLQuery
+   {
+      get { return this._query; }
+   }
+
+   public override SqlCommand Add()
+   {
+      String[] fields = { this._incID, this._Name, this._Date, this._Time, this._Location, this._Trainer };
+      this._fields = new List<string>();
+      string sql;
+      foreach (string s in fields)
+      {
+         string temp = s.Replace("'", "''");
+         this._fields.Add("'" + temp + "'");
+      }
+      sql = String.Join(",", this._fields.ToArray());
+
+      return (@"INSERT INTO Training VALUES(" + sql + "); SELECT SCOPE_IDENTITY()");
+   }
+
+   public override string Add(string name)
+   {
+      return (@"INSERT INTO Training VALUES('" + this.IncidentID + "'); SELECT SCOPE_IDENTITY()" );
+   }
+
+   public override string Update()
+   {
+      this._Name = this._Name.Replace("'", "''");
+      this._Location = this._Location.Replace("'", "''");
+      this._Trainer = this._Trainer.Replace("'", "''");
+
+      return (@"UPDATE Training SET  IncidentID='"   + this._incID + "'," +
+                                      "Name='"  + this._Name + "'," +
+                                      "Date='" + this._Date + "'," +
+                                      "Time='"   + this._Time + "'," +
+                                      "Location='"   + this._Location + "'," +
+                                      "Trainer='" + this._Trainer + "' " +
+                                      "WHERE ID ='" + this._RecID + "'");
+   }
+
+   public override string Update(int id, string name)
+   {
+      return ("");
+   }
+
+   public override string Delete(int id)
+   {
+      return (@"DELETE FROM Training WHERE ID=" + this._RecID);
+   }
+}

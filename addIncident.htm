@@ -1,0 +1,506 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+
+#formCenter
+{
+
+}   
+
+#formBox
+  {
+     text-align:center;
+     width:400px;
+     border: 0px solid #9f9f9f;
+  }
+
+#accDate
+  {  
+     width:200px;  
+  }    
+
+#empDropDown
+  {
+     text-align:left;
+  }
+  
+#response
+  {
+     height:40px;
+  }   
+
+#fullname
+  {
+     text-align: center;
+     font-size: 16px;
+  }     
+  
+#results
+  {
+     text-align:center;
+     font-weight: normal;
+     font-family: 'Muli', sans-serif;
+     font-size: 14px;
+  }  
+
+.desc
+  {
+    font-weight: normal;
+    position: relative;
+    text-shadow: 0 -1px rgba(0,0,0,0.6);
+    font-size: 28px;
+    line-height: 40px;
+    background: #355681;
+    background: rgba(53,86,129, 0.8);
+    border: 1px solid #fff;
+    padding: 5px 15px;
+    color: white;
+    border-radius: 0 10px 0 10px;
+    box-shadow: inset 0 0 5px rgba(53,86,129, 0.5);
+    font-family: 'Muli', sans-serif;
+  }
+</style>
+	<script>
+	   var fs, select, store, profile, validate, memoryStore, incdntStore;
+	   require([
+               "dojo/parser",
+               "dojo/_base/declare",
+               "dojo/_base/lang",
+               "dijit/registry",
+               "dojo/dom-construct",
+               "dojo/_base/array",
+               "dojo/request",
+               "dijit/form/FilteringSelect",
+               "dijit/form/Select",
+               "dojo/data/ObjectStore",
+               "dojo/data/ItemFileWriteStore",
+               "dojo/store/Memory",
+               "dojo/store/JsonRest",
+               "dojo/store/Observable",
+               "dojo/store/Cache",
+               "dojox/validate",
+               "dojox/data/QueryReadStore",
+               "dojox/validate/check",
+               "dojox/validate/web",
+               "dijit/form/Form",
+               "dijit/form/RadioButton",
+               "dojo/domReady!"
+     ], function (parser, declare, lang, registry, domConstruct, array, request, FilteringSelect, Select, ObjectStore, ItemFileWriteStore, Memory, JsonRest, Observable, Cache, validate, QueryReadStore) {
+
+        declare("IncComboBoxReadStore", QueryReadStore, {
+           fetch: function (request) {
+              request.serverQuery = { q: request.query.ClaimNumber.replace("*", "%") };
+              return this.inherited("fetch", arguments);
+           }
+        });
+        
+        declare("EmpComboBoxReadStore", QueryReadStore, {
+           fetch: function (request) {
+              request.serverQuery = { q: request.query.LastName.replace("*", "%") };
+              return this.inherited("fetch", arguments);
+           }
+        });
+
+        //Claims
+        var claimsRestStore = new JsonRest({
+           target: "getClaimsJSON.ashx?mode=init&ent=claim"
+        });
+
+        var claimsMemoryStore = new Memory();
+        var claimsStore = new Cache(claimsRestStore, claimsMemoryStore);
+
+        claimsSelect = new Select({
+           id: "claimclassSelect",
+           required: true,
+           name: "claimtype",
+           labelAttr: "label",
+           store: claimsStore,
+           style: "width:200px;"
+        }, "claimDropDown");
+        claimsSelect.startup();
+
+
+        //Supervisor
+        var supeRestStore = new JsonRest({
+           target: "getClaimsJSON.ashx?mode=init&ent=supe"
+        });
+
+        var supeMemoryStore = new Memory();
+        var supeStore = new Cache(supeRestStore, supeMemoryStore);
+
+
+        var supeSelect = new Select({
+           id: "supeSelect",
+           required: true,
+           name: "supervisor",
+           labelAttr: "label",
+           store: supeStore,
+           style: "width:200px;"
+        }, "supeDropDown");
+        supeSelect.startup();
+     })
+
+        function setFSFields(record) {
+
+           dijit.byId("incidentNo").set("value", record.item.i.ClaimNumber);
+           dijit.byId("claimLocation").set("value", record.item.i.Location);
+           dijit.byId("claimTime").set("value", record.item.i.Time);
+           dijit.byId("claimclassSelect").set("value", record.item.i.ClaimType);
+           dijit.byId("employee").set("value", record.item.i.EmployeeID);
+           dijit.byId("employee").set("displayedValue", record.item.i.ELast);
+           dijit.byId("accidentDate").set("value", record.item.i.DateOfAccident);
+           dijit.byId("stopDate").set("value", record.item.i.StopWork);
+           dijit.byId("returnDate").set("value", record.item.i.ReturnWork);
+           dijit.byId("retTransitionalDate").set("value", record.item.i.ReturnTransitional);
+           dijit.byId("primInjury").set("value", record.item.i.PrimaryInjury);
+           dijit.byId("secInjury").set("value", record.item.i.SecondaryInjury);
+           dijit.byId("cause").set("value", record.item.i.Cause);
+           dijit.byId("description").set("value", record.item.i.Description);
+           dijit.byId("INService").set("value", record.item.i.INService);
+           dijit.byId("DaysLost").set("value", record.item.i.DaysLost);
+           dijit.byId("Year").set("value", record.item.i.Year);
+           dijit.byId("Month").set("value", record.item.i.Month);
+           dijit.byId("Paid").set("value", record.item.i.Paid);
+           dijit.byId("FutureReserve").set("value", record.item.i.FutureReserve);
+           dijit.byId("TotalIncurred").set("value", record.item.i.TotalIncurred);
+        }
+
+        function newToggleState(radioVal) {
+           dojo.byId("response").innerHTML = "";
+        }
+
+     dojo.connect(dijit.byId("FutureReserve"), "onkeyup", function () {
+        dijit.byId("TotalIncurred").set("value", dijit.byId("Paid").get('value') + dijit.byId("FutureReserve").get('value'));
+     });
+
+</script>
+</head>
+<body class="claro">
+
+<div id="formCenter">
+
+  <div data-dojo-type="dijit/form/Form" encType="multipart/form-data" method="post" id="incdntForm" data-dojo-id="incdntForm">
+
+  <script type="dojo/on" data-dojo-event="reset">
+        return confirm('Press OK to reset widget values');
+    </script>
+
+    <script type="dojo/on" data-dojo-event="submit">
+
+        var targetNode = dojo.byId("response");
+        var rBoxes = dojo.query("input:checked");
+        var id = dijit.byId('incdntFS').get('value');
+        var curr = dijit.byId('incdntFS').get('displayedValue');
+        var status;
+
+        var xhrArgs = {
+           url: "getClaimsJSON.ashx",
+           form: dojo.byId("incdntForm"),
+           handleAs: "text",
+           load: function (data) {
+
+     
+              switch(rBoxes[0].value) {
+                 case '1':
+                    status = "Information was successfully added to the database";
+                    break;
+                 case '2':
+                   if(id == "0")
+                      {
+                         status = "List is empty";
+                      }
+                      else
+                      {
+                         status = "Information was successfully updated in the database";
+                      }
+                      break;
+                  case '3':
+                     if(id == "0")
+                        {
+                           status = "List is empty";
+                        }
+                     else
+                        {
+                           status = "Information was successfully deleted in the database";
+                        }
+                   break;
+              }
+
+              var result = data.split(':');
+
+              if(result.length == 2)
+                {
+                  status = "Duplicate ID Number: Please choose again.";
+                }
+
+                 targetNode.innerHTML = status;
+              },
+              error: function (error) {
+                 dojo.byId("response").innerHTML = "An unexpected error occurred: " + error;
+              }
+           }
+        if(rBoxes[0].value != '4') {
+              if(this.validate())  {
+              var deferred = dojo.xhrGet(xhrArgs);
+           }
+           else  {
+               alert('Form is not completed.  Please review');
+               return false;
+           }
+        }
+        else  {
+              var deferred = dojo.xhrGet(xhrArgs);
+        }
+
+        return false;        
+    </script>
+    <table border="0" align="center" id="formBox" cellspacing="6">
+
+        <tr>
+            <td>
+                <label for="lblIncidentDropDown">Search Incident:</label>
+            </td>
+            <td align="left">
+                 <div data-dojo-type="IncComboBoxReadStore" data-dojo-id="store" data-dojo-props="url:'getClaimsJSON.ashx?mode=init&ent=incfilter', requestMethod:'get'"></div>
+               <input id="incdntFS" name="incident" data-dojo-type="dijit/form/FilteringSelect" data-dojo-props="store:store, searchAttr:'ClaimNumber', labelAttr:'ClaimNumber', pageSize:10" style="width:200px" onChange="setFSFields(this)"/>
+            </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lbIncidentNo"><label for="lblInc">Incident:</label></div>
+           </td>
+           <td align="left">
+                <div id="tbIncidentNo">
+                <input type="text" id="incidentNo" name="incidentNo" required="true" data-dojo-type="dijit/form/NumberTextBox" 
+                data-dojo-props="constraints:{min:0, max:200000, places:0},invalidMessage: 'Please enter a numeric value.'"
+                style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lbclaimLocation"><label for="location">Claim Location:</label></div>
+           </td>
+           <td align="left">
+                <div id="tbClaimLocation"><input type="text" id="claimLocation" name="claimLocation" required="false" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+           <td>
+              <div id="lbclaimTime"><label for="time">Claim Time:</label></div>
+           </td>
+           <td align="left">
+                <div id="tbClaimTime"><input type="text" id="claimTime" name="claimTime" required="false" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+           </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="claimDropDownLabel">Claim Type:</label>
+            </td>
+            <td align="left">
+               <div id="claimDropDown"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="empDropDownLabel">Employee:</label>
+            </td>
+            <td align="left">
+                 <div data-dojo-type="EmpComboBoxReadStore" data-dojo-id="store" data-dojo-props="url:'getClaimsJSON.ashx?mode=init&ent=emp', requestMethod:'get'"></div>
+               <input id="employee" name="employee" data-dojo-type="dijit/form/FilteringSelect" data-dojo-props="store:store, searchAttr:'LastName', labelAttr:'LastName', pageSize:10" style="width:200px" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="incdntAccidentData">Date of Accident:</label>
+            </td>
+            <td align="left">
+               <div id="accDate"><input type="text" name="accidentDate" id="accidentDate" data-dojo-type="dijit/form/DateTextBox" required="true" value="2008-3-15"/></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="lblYear">(Accident) Year:</label>
+            </td>
+            <td align="left">
+               <div id="tbYear"><input type="text" name="Year" id="Year" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="lblMonth">(Accident) Month:</label>
+            </td>
+            <td align="left">
+               <div id="tbMonth"><input type="text" name="Month" id="Month" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px" /></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="incdntStopWork">Stop Date:</label>
+            </td>
+            <td align="left">
+               <div id="tbStopDate"><input type="text" name="stopDate" id="stopDate" data-dojo-type="dijit/form/DateTextBox" required="true" /></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="incdntReturnWork">Return Date:</label>
+            </td>
+            <td align="left">
+               <div id="tbReturnDate"><input type="text" name="returnDate" id="returnDate" data-dojo-type="dijit/form/DateTextBox" required="true" /></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="incdntReturnTransitional">Transitional Date:</label>
+            </td>
+            <td align="left">
+               <div id="tbRetTransitionalDate"><input type="text" name="retTransitionalDate" id="retTransitionalDate" data-dojo-type="dijit/form/DateTextBox" required="true" /></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="taPrimaryInjury">Primary Injury:</label>
+            </td>
+           <td align="left">
+                <div id="taPrimaryInjury"><textarea id="primInjury" name="primInjury" data-dojo-type="dijit/form/Textarea" style="width:200px;height:400px"></textarea></div>
+           </td>
+         </tr>
+        <tr>
+            <td>
+                <label for="taSecondaryInjury">Secondary Injury:</label>
+            </td>
+           <td align="left">
+                <div id="taSecondaryInjury"><textarea id="secInjury" name="secInjury" data-dojo-type="dijit/form/Textarea" style="width:200px;height:400px"></textarea></div>
+           </td>
+         </tr>
+        <tr>
+            <td>
+                <label for="taCause">Cause:</label>
+            </td>
+           <td align="left">
+                <div id="taCause"><textarea id="cause" name="cause" data-dojo-type="dijit/form/Textarea" style="width:200px;height:400px"></textarea></div>
+           </td>
+         </tr>
+        <tr>
+            <td>
+                <label for="taDescription">Description:</label>
+            </td>
+           <td align="left">
+                <div id="taDescription"><textarea id="description" name="description" data-dojo-type="dijit/form/Textarea" style="width:200px;height:400px"></textarea></div>
+           </td>
+         </tr>
+        <tr>
+            <td>
+                <label for="supeDropDownLabel">Supervisor:</label>
+            </td>
+            <td align="left">
+               <div id="supeDropDown"></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="lblINService">INService:</label>
+            </td>
+            <td align="left">
+               <div id="tbINService"><input type="text" name="INService" id="INService" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px"/></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="lblDaysLost">Days Lost:</label>
+            </td>
+            <td align="left">
+               <div id="tbDaysLost"><input type="text" name="DaysLost" id="DaysLost" required="true" data-dojo-type="dijit/form/ValidationTextBox" style="width:200px"/></div>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <label for="lblPaid">Paid:</label>
+            </td>
+            <td align="left">
+               <div id="tbPaid"><input type="text" name="Paid" id="Paid" data-dojo-type="dijit/form/CurrencyTextBox" 
+               data-dojo-props="constraints:{fractional:true}, currency:'USD', invalidMessage: 'Invalid amount. Paid value in money format.'" style="width:200px" /></div>
+               
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="lblFutureReserve">Future Reserve:</label>
+            </td>
+            <td align="left">
+               <div id="tbFutureReserve"><input type="text" name="FutureReserve" id="FutureReserve" required="true" data-dojo-type="dijit/form/CurrencyTextBox" 
+               data-dojo-props="constraints:{fractional:true}, currency:'USD', invalidMessage: 'Invalid amount. Future Reserve not in money format.'" style="width:200px"/></div>
+               
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label for="lblTotalIncurred">Total Incurred:</label>
+            </td>
+            <td align="left">
+               <div id="tbTotalIncurred"><input type="text" name="TotalIncurred" id="TotalIncurred" required="true" data-dojo-type="dijit/form/CurrencyTextBox" 
+                data-dojo-props="constraints:{fractional:true}, currency:'USD', invalidMessage: 'Invalid amount. Total Incurred not in money format.'" 
+               style="width:200px" /></div>
+            </td>
+        </tr>
+        <tr>
+           <td colspan="2"><div id="response">&nbsp;</div></td>
+        </tr>
+        <tr>
+           <td colspan="2">
+              <input type="hidden" name="mode" value="admin" />
+              <input type="hidden" name="ent" value="incident" />
+              <input type="radio" data-dojo-type="dijit/form/RadioButton" name="action" id="rbAdd" value="1" checked="checked" onclick="newToggleState(this);"/> <label for="rbAdd">Add</label>&nbsp;&nbsp;
+              <input type="radio" data-dojo-type="dijit/form/RadioButton" name="action" id="rbUpdate" value="2" onclick="newToggleState(this);"/> <label for="rbUpdate">Update</label>&nbsp;&nbsp;
+              <input type="radio" data-dojo-type="dijit/form/RadioButton" name="action" id="rbDelete" value="3" onclick="newToggleState(this);"/> <label for="rbDelete">Delete</label>&nbsp;&nbsp;
+           <br /><br />
+           <button data-dojo-type="dijit/form/Button" type="submit" name="submitButton" value="Submit">Submit</button>
+           <button data-dojo-type="dijit/form/Button" type="reset">Reset</button>
+           <button data-dojo-type="dijit/form/Button" type="button">Show Grid
+              <script type="dojo/on" data-dojo-event="click" data-dojo-args="evt">
+              require(["dijit/Dialog", "dijit/layout/BorderContainer", "dojox/layout/ContentPane"], function(Dialog, BorderContainer, ContentPane){
+
+                 var layout = new BorderContainer({
+                   design: "headline",
+
+                   style: "margin:0px;width:1600px;height: 800px;"
+                });
+
+                var centerPane = new ContentPane({
+                   region: "center",
+                   style: "background-color:#ccffff;margin:0px;font-face='Verdana';overflow:hidden;"
+                });
+
+                var bottomPane = new ContentPane({
+                   region: "right",
+                   style: "background-color:#ffffff;width:100px;margin:0px;font-face='Verdana';overflow:hidden;"
+                });
+
+                 var dialog = new Dialog({
+                   hide: function () { dialog.destroy(); },
+                   title: "Claims Incident Grid",
+                   content: layout
+                });
+                
+
+                layout.addChild(centerPane);
+                layout.addChild(bottomPane);
+
+                centerPane.set('href', "Grid.htm");
+
+                dialog.containerNode.style.backgroundColor = "#ccffff";
+                dialog.startup();
+                dialog.show();
+
+              });
+    </script>
+           </button>
+           </td>
+        </tr>
+    </table>
+  </div>
+</div>
+</body>
+</html>

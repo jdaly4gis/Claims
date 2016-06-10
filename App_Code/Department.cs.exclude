@@ -1,0 +1,99 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
+
+/// <summary>
+/// Summary description for Department
+/// </summary>
+public class Department:AdminFunctions
+{
+   private string _deptID;
+   private string _name;
+   private string _action;
+   private SqlCommand _query;
+
+	public Department()
+	{
+		//
+		// TODO: Add constructor logic here
+		//
+	}
+
+   public Department(string deptID)
+	{
+      this._deptID = deptID;
+	}
+
+	public Department(string deptID, string name)
+	{
+      this._deptID = deptID;
+      this._name = name;
+	}
+
+	public Department(string deptID, string name, string action)
+	{
+      this._deptID = deptID;
+      this._name = name;
+      this._action = action;
+
+      if (this._action == "1")
+      {
+         this._query = this.Add(this._name);
+      }
+      else if (this._action == "2")
+      {
+         this._query = this.Update(Convert.ToInt32(this._deptID), this._name);
+      }
+      else
+      {
+         this._query = this.Delete(Convert.ToInt32(this._deptID));
+      }
+	}
+
+   public int DepartmentID
+   {
+      get { return Convert.ToInt32(_deptID); }
+   }
+
+   public string DepartmentName
+   {
+      get { return _name; }
+   }
+
+   public int DepartmentAction
+   {
+      get { return Convert.ToInt32(_action); }
+   }
+
+   public SqlCommand GetSQLQuery
+   {
+      get { return this._query; }
+   }
+
+   public override SqlCommand Add()
+   {
+      return (null);
+   }
+
+   public override string Add(string name)
+   {
+      return (null);
+   }
+
+   public override string Update()
+   {
+      return (@"UPDATE Department SET Name='"  + this._name  + "' WHERE ID=" + this._deptID);
+   }
+
+   public override string Update(int id, string name)
+   {
+      return (@"UPDATE Department SET Name='"  + this._name  + "' WHERE ID=" + this._deptID);
+   }
+
+   public override string Delete(int id)
+   {
+      return (@"DELETE FROM Department WHERE ID=" + this._deptID);
+   }
+}

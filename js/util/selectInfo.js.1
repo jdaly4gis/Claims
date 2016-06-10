@@ -1,0 +1,111 @@
+﻿//************ Utils for showing info from Govern and Suffolk County Files ****************//
+
+function getQueryType(query, taxmap) {
+
+   var rowElem = [];
+   var store = new dojox.data.QueryReadStore({ url: 'getDeedsJSON.ashx' });
+   store.fetch({ serverQuery: { q: taxmap, db: "govern", queryType: query },
+
+      onError: function () {
+         alert("Error on retrieving query");
+      },
+
+      onComplete: function (items, request) {
+         for (var i = 0, length = items.length; i < length; i++) {
+            for (var ind in items[i]) {
+               if (ind === 'r') continue;
+               for (var vals in items[i][ind]) {
+                  if (items[i][ind][vals] !== "") {
+                     if (vals === "id") continue;
+                     var elem = vals + " = " + items[i][ind][vals];
+                     rowElem.push(elem);
+                  }
+               }
+            }
+         }
+      }
+   })
+   
+   return rowElem.join('<br>')
+}
+
+function getInfo(query) {
+
+   var rowElem = [];
+   var row = grid.menu.context.row ? grid.menu.context.row : grid.menu.context.cell ? grid.menu.context.cell.row : null;
+   var tmCell = grid.menu.context.grid.cell(row.id, 0);
+
+   var store = new dojox.data.QueryReadStore({ url: 'getDeedsJSON.ashx' });
+   store.fetch({ serverQuery: { q: tmCell.data(), db: "govern", queryType: query },
+
+      onError: function () {
+         alert("Error on retrieving query");
+      },
+
+      onComplete: function (items, request) {
+         for (var i = 0, length = items.length; i < length; i++) {
+            for (var ind in items[i]) {
+               if (ind === 'r') continue;
+               for (var vals in items[i][ind]) {
+                  if (items[i][ind][vals] !== "") {
+                     if (vals === "id") continue;
+                     var elem = vals + " = " + items[i][ind][vals];
+                     rowElem.push(elem);
+                  }
+               }
+            }
+         }
+
+         var layout = new dijit.layout.BorderContainer({
+            design: "headline",
+            style: "width: 600px; height: 600px; background-color: #ccffff;"
+         });
+
+         var centerPane = new dijit.layout.ContentPane({
+            region: "center",
+            style: "font-face='Verdana'; background-color: #f9f6f4;",
+//            content: "<div id='govQuery'>" + rowElem.join('<br>') + "</div>"
+            content: "<div id='govQuery'>" + getQueryType('initQuery', tmCell.data()) + "</div>"
+         });
+
+         var actionPane = new dijit.layout.ContentPane({
+            region: "bottom",
+            style: "height: 30px; background-color: #f9f6f4;"
+         });
+
+         var parcelSelect = new dijit.form.Button({
+            label: "Parcel Info",
+            onClick: function () {
+               dojo.byId("govQuery").innerHTML = getQueryType('initQuery', tmCell.data()); //rowElem.join('<br>');
+            }
+         }).placeAt(actionPane.containerNode);
+
+         var ownerSelect = new dijit.form.Button({
+            label: "Owner Info",
+            onClick: function () {
+               dojo.byId("govQuery").innerHTML = getQueryType('ownerQuery', tmCell.data());
+            }
+         }).placeAt(actionPane.containerNode);
+
+         layout.addChild(centerPane);
+         layout.addChild(actionPane);
+         layout.startup();
+
+         var dialog = new dijit.Dialog({
+            title: "Govern Results: " + tmCell.data(),
+            content: layout
+         });
+
+
+         dialog.containerNode.style.backgroundColor = "#ccffff";
+         dialog.startup();
+         dialog.show();
+      }
+   })
+
+  }
+
+  function showInfo(query)
+  {
+     getInfo(query);
+  }

@@ -1,0 +1,135 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Web;
+
+/// <summary>
+/// Summary description for Incident
+/// </summary>
+public class Insurance:AdminFunctions
+{
+   private string _incID;
+   private string _RecID;
+   private string _PolicyID;
+   private string _Description;
+   private string _CoverageType;
+   private string _PremiumCost;
+   private string _DeductibleLevel;
+   private string _Year;
+
+   private string _action;
+   private SqlCommand _query;
+   List<string>  _fields;
+   private HttpContext _context;
+
+	public Insurance()
+	{
+		//
+		// TODO: Add constructor logic here
+		//
+	}
+
+   public Insurance(string incID)
+	{
+      this._incID = incID;
+	}
+
+   public Insurance(string incID, string name)
+	{
+
+	}
+
+	public Insurance(HttpContext inVars)
+	{
+      List<string> _fields = new List<string>();
+
+      this._RecID = inVars.Request["RecIDIns"];
+      this._incID = inVars.Request["IncNoIns"];
+      this._PolicyID = inVars.Request["PolicyID"];
+      this._Description = inVars.Request["InsDescription"];
+      this._CoverageType = inVars.Request["CoverageType"];
+      this._PremiumCost = inVars.Request["PremiumCost"];
+      this._DeductibleLevel = inVars.Request["DeductibleLevel"];
+      this._Year = inVars.Request["InsYear"];
+
+      this._action = inVars.Request["action"];
+      this._context = inVars;
+      
+      if (this._action == "1")
+      {
+         this._query = this.Add();
+      }
+      else if (this._action == "2")
+      {
+         this._query = this.Update();
+      }
+      else
+      {
+         this._query = this.Delete(Convert.ToInt32(this._incID));
+      }
+	}
+
+   public int IncidentID
+   {
+      get { return Convert.ToInt32(_incID); }
+   }
+
+   public int IncidentAction
+   {
+      get { return Convert.ToInt32(_action); }
+   }
+
+   public SqlCommand GetSQLQuery
+   {
+      get { return this._query; }
+   }
+
+   public override SqlCommand Add()
+   {
+      String[] fields = { this._incID, this._PolicyID, this._Description, this._CoverageType, this._PremiumCost, this._DeductibleLevel, this._Year };
+      this._fields = new List<string>();
+      string sql;
+      foreach (string s in fields)
+      {
+         string temp = s.Replace("'", "''");
+         this._fields.Add("'" + temp + "'");
+      }
+      sql = String.Join(",", this._fields.ToArray());
+
+      return (null);
+   }
+
+   public override string Add(string name)
+   {
+      return (null);
+   }
+
+   public override string Update()
+   {
+      this._PolicyID = this._PolicyID.Replace("'", "''");
+      this._Description = this._Description.Replace("'", "''");
+      this._CoverageType = this._CoverageType.Replace("'", "''");
+
+      return (@"UPDATE Insurance SET  IncidentID='"   + this._incID + "'," +
+                                      "PolicyID='"  + this._PolicyID + "'," +
+                                      "Description='" + this._Description + "'," +
+                                      "CoverageType='"   + this._CoverageType + "'," +
+                                      "PremiumCost='"   + this._PremiumCost + "'," +
+                                      "DeductibleLevel='"   + this._DeductibleLevel + "'," +
+                                      "Year='" + this._Year + "' " +
+                                      "WHERE ID ='" + this._RecID + "'");
+   }
+
+   public override string Update(int id, string name)
+   {
+      return ("");
+   }
+
+   public override string Delete(int id)
+   {
+      return (@"DELETE FROM Insurance WHERE ID=" + this._RecID);
+   }
+}

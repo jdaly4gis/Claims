@@ -1,0 +1,120 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
+
+/// <summary>
+/// Summary description for EmployeeClass
+/// </summary>
+public class EmployeeClass:AdminFunctions
+{
+   private string _empclassID;
+   private string _name;
+   private string _description;
+   private SqlCommand _query;
+   private string _action;
+
+   List<string>  _fields;
+   private HttpContext _context;
+
+	public EmployeeClass()
+	{
+		//
+		// TODO: Add constructor logic here
+		//
+	}
+
+   public EmployeeClass(string empclassID)
+	{
+      this._empclassID = empclassID;
+	}
+
+	public EmployeeClass(string empclassID, string name)
+	{
+
+	}
+
+	public EmployeeClass(HttpContext inVars)
+	{
+      List<string> _fields = new List<string>();
+
+      this._empclassID = inVars.Request["empclass"];
+      this._name = inVars.Request["name"];
+      this._description = inVars.Request["description"];
+      this._action = inVars.Request["action"];
+      this._context = inVars;
+
+
+      if (this._action == "1")
+      {
+         this._query = this.Add();
+      }
+      else if (this._action == "2")
+      {
+         this._query = this.Update();
+      }
+      else
+      {
+         this._query = this.Delete(Convert.ToInt32(this._empclassID));
+      }
+	}
+
+   public int EmployeeClassID
+   {
+      get { return Convert.ToInt32(_empclassID); }
+   }
+
+   public string EmployeeClassName
+   {
+      get { return _name; }
+   }
+
+   public int EmployeeClassAction
+   {
+      get { return Convert.ToInt32(_action); }
+   }
+
+   public SqlCommand GetSQLQuery
+   {
+      get { return this._query; }
+   }
+
+   public override SqlCommand Add()
+   {
+
+      String[] fields = { this._name, this._description };
+      this._fields = new List<string>();
+      string sql;
+      foreach (string s in fields)
+      {
+         this._fields.Add("'" + s + "'");
+      }
+      sql = String.Join(",", this._fields.ToArray());
+
+      return (null);
+   }
+
+   public override string Add(string name)
+   {
+      return (null);
+   }
+
+   public override string Update()
+   {
+      return (@"UPDATE EmployeeClass SET Name='"   + this._name + "'," +
+                                      "Description='"  + this._description + "' " +
+                                      "WHERE ID=" + this._empclassID);
+   }
+
+   public override string Update(int id, string name)
+   {
+      return (@"UPDATE EmployeeClass SET Name='"  + this._name  + "' WHERE ID=" + this._empclassID);
+   }
+
+   public override string Delete(int id)
+   {
+      return (@"DELETE FROM EmployeeClass WHERE ID=" + this._empclassID);
+   }
+}

@@ -1,0 +1,134 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Web;
+
+/// <summary>
+/// Summary description for Incident
+/// </summary>
+public class StandardPPE:AdminFunctions
+{
+   private string _incID;
+   private string _RecID;
+   private string _EQID;
+   private string _Cost;
+   private string _Description;
+   private string _Vendor;
+
+   private string _action;
+   private SqlCommand _query;
+   List<string>  _fields;
+   private HttpContext _context;
+
+	public StandardPPE()
+	{
+		//
+		// TODO: Add constructor logic here
+		//
+	}
+
+   public StandardPPE(string incID)
+	{
+      this._incID = incID;
+	}
+
+   public StandardPPE(string incID, string name)
+	{
+
+	}
+
+	public StandardPPE(HttpContext inVars)
+	{
+      List<string> _fields = new List<string>();
+
+      this._RecID = inVars.Request["RecIDPPE"];
+      this._incID = inVars.Request["IncNoPPE"];
+      this._EQID = inVars.Request["EquipID"];
+      this._Cost = inVars.Request["Cost"];
+      this._Description = inVars.Request["PPEDescription"];
+      this._Vendor = inVars.Request["Vendor"];
+
+
+ 
+      this._action = inVars.Request["action"];
+      this._context = inVars;
+      
+      if (this._action == "1")
+      {
+         this._query = this.Add();
+      }
+      else if (this._action == "2")
+      {
+         this._query = this.Update();
+      }
+      else
+      {
+         this._query = this.Delete(Convert.ToInt32(this._incID));
+      }
+	}
+
+   public int IncidentID
+   {
+      get { return Convert.ToInt32(_incID); }
+   }
+
+
+
+   public int IncidentAction
+   {
+      get { return Convert.ToInt32(_action); }
+   }
+
+   public SqlCommand GetSQLQuery
+   {
+      get { return this._query; }
+   }
+
+   public override SqlCommand Add()
+   {
+      String[] fields = { this._incID, this._EQID, this._Cost, this._Description, this._Vendor };
+      this._fields = new List<string>();
+      string sql;
+      foreach (string s in fields)
+      {
+         string temp = s.Replace("'", "''");
+         this._fields.Add("'" + temp + "'");
+      }
+      sql = String.Join(",", this._fields.ToArray());
+
+      return (null);
+   }
+
+   public override string Add(string name)
+   {
+      return (@"INSERT INTO StandardPPE VALUES('" + this.IncidentID + "'); SELECT SCOPE_IDENTITY()" );
+   }
+
+   public override string Update()
+   {
+      this._EQID = this._EQID.Replace("'", "''");
+      this._Cost = this._Cost.Replace("'", "''");
+      this._Description = this._Description.Replace("'", "''");
+      this._Vendor = this._Vendor.Replace("'", "''");
+
+      return (@"UPDATE StandardPPE SET  IncidentID='"   + this._incID + "'," +
+                                      "EQID='"  + this._EQID + "'," +
+                                      "Cost='" + this._Cost + "'," +
+                                      "Description='"   + this._Description + "'," +
+                                      "Vendor='" + this._Vendor + "' " +
+                                      "WHERE ID ='" + this._RecID + "'");
+   }
+
+   public override string Update(int id, string name)
+   {
+      return ("");
+   }
+
+   public override string Delete(int id)
+   {
+      return (@"DELETE FROM StandardPPE WHERE ID=" + this._RecID);
+   }
+}
