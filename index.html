@@ -1,6 +1,5 @@
 ﻿<!DOCTYPE html>
 <html lang="en" ng-app="claimsApp">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,7 +7,7 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head
          content must come *after* these tags -->
     <title>Claims Website</title>
-        <!-- Bootstrap -->
+     <!-- Bootstrap -->
 
      <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
      <link href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet">
@@ -77,7 +76,6 @@
         </div>
     </div>
     <header class="jumbotron">
-
         <div class="container">
             <div class="row row-header">
                 <div class="col-xs-12 col-sm-8">
@@ -90,138 +88,156 @@
     </header>
     <div class="container">
         <div class="row">
-            <div class="col-xs-12 col-sm-10  col-md-6 col-lg-6">
-              <div class="row">
-                <div class="col-xs-10">
-                  <ul class="breadcrumb">
-                    <li><a href="">Home</a></li>
-                    <li class="active">Tables</li>
-                  </ul>
+            <div class="col-xs-12 col-sm-10">
+                <div class="row">
+                    <div class="col-xs-10">
+                        <ul class="breadcrumb">
+                            <li><a href="">Home</a></li>
+                            <li class="active">Tables</li>
+                        </ul>
+                    </div>
+                    <div class="col-xs-12 col-sm-12">
+                        <h3>Data Tables</h3>
+                        <hr>
+                    </div>
                 </div>
-                <div class="col-xs-12 col-sm-12">
-                  <h3>Data Tables</h3>
-                  <hr>
-                </div>
-          </div>
-        <div id="employee" class="row row-content">
-           <div class="col-xs-12">
-             <h3>Employee (Claimant)</h3>
-           </div>
-           <div id="status_para" class="col-xs-12">
-           </div>
-            <div class="col-xs-12 col-sm-9" ng-controller="EmployeeController">
-            <form class="form-horizontal" id="employeeForm" name="employeeForm" role="form"  ng-submit="sendEmployeeInfo()" novalidate>
-               <div class="form-group" ng-class="{'has-error' : employeeForm.firstname.$error.required && !employeeForm.firstname.$pristine}">
-                   <div class="col-sm-10">
-                   <label for="firstname" class="control-label">First Name</label>
-                       <input type="text" class="form-control"  id="firstname" name="firstname" placeholder="Enter First Name (req)" ng-model="employee.firstname" required>
-                       <span ng-show="employeeForm.firstname.$error.required && !employeeForm.firstname.$pristine" class="help-block"> Your First Name is required.</span>
-                   </div>
-               </div>
-               <div class="form-group">
-                   <div class="col-sm-10">
-                   <label for="firstname" class="control-label">Middle</label>
-                   <input type="text" class="form-control" id="middlename" name="middlename" placeholder="Enter Middle Name" ng-model="employee.middlename">
-                   </div>
-                </div>
-                <div class="form-group" ng-class="{'has-error' : employeeForm.lastname.$error.required && !employeeForm.lastname.$pristine}">
-                   <div class="col-sm-10">
-                   <label for="lastname" class="control-label">Last Name</label>
-                       <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter Last Name (req)" ng-model="employee.lastname" required>
-                       <span ng-show="employeeForm.lastname.$error.required && !employeeForm.lastname.$pristine" class="help-block"> Your Last Name is required.</span>
-                   </div>
-               </div>
-               <div class="form-group">
-                    <div class="col-sm-10">
-                        <label for="ptelnum" class="control-label">Primary Tel.</label>
+                <div id="employee" class="row row-content">
+                    <div class="col-xs-6">
+                       	<h3><i class="fa fa-user fa-lg"></i>&nbsp;&nbsp;Employee (Claimant)</h3>
+                    </div>
+                    <div id="status_para" class="col-xs-12">
+                    </div>
+                    <div class="col-xs-6" ng-controller="EmployeeController">
                         <div class="row">
-                            <div class="col-xs-7 col-sm-6 col-md-5">
-                                <div class="input-group">
-                                    <div class="input-group-addon">(</div>
-                                    <input type="tel" class="form-control" id="pareacode" name="pareacode" placeholder="Area" ng-model="employee.pareacode">
-                                    <div class="input-group-addon">)</div>
+                            <div class="col-sm-4">
+                                <div class="form-group" ng-class="{'has-error' : employeeForm.firstname.$error.required && !employeeForm.firstname.$pristine}">
+                                    <label for="firstname" class="control-label">First</label>
+                                    <input type="text" class="form-control"  id="firstname" name="firstname" placeholder="Enter First (req)" ng-model="employee.firstname" required>
+                                    <span ng-show="employeeForm.firstname.$error.required && !employeeForm.firstname.$pristine" class="help-block"> Your First Name is required.</span>
                                 </div>
                             </div>
-                            <div class="col-xs-7">
-                                <input type="tel" class="form-control" id="ptelnum" name="ptelnum" placeholder="Tel. number" ng-model="employee.ptelnum">
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label for="firstname" class="control-label">Middle</label>
+                                    <input type="text" class="form-control" id="middlename" name="middlename" placeholder="Enter Name" ng-model="employee.middlename">
+                                </div>
                             </div>
+                            <div class="col-sm-4">
+                                <div class="form-group" ng-class="{'has-error' : employeeForm.lastname.$error.required && !employeeForm.lastname.$pristine}">
+                                    <label for="lastname" class="control-label">Last</label>
+                                    <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Enter Last (req)" ng-model="employee.lastname" required>
+                                    <span ng-show="employeeForm.lastname.$error.required && !employeeForm.lastname.$pristine" class="help-block"> Your Last Name is required.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group" ng-class="{'has-error' : employeeForm.address.$error.required && !employeeForm.address.$pristine}">
+                                    <label for="address" class="control-label">Address</label>
+                                    <input type="text" class="form-control" id="address" name="address" placeholder="Enter Address (req)" ng-model="employee.address" required>
+                                    <span ng-show="employeeForm.address.$error.required && !employeeForm.address.$pristine" class="help-block"> Your Address is required.</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group" ng-class="{'has-error' : employeeForm.city.$error.required && !employeeForm.city.$pristine}">
+                                    <label for="city" class="control-label">City</label>
+                                    <input type="text" class="form-control" id="city" name="city" placeholder="Enter City (req)" ng-model="employee.city" required>
+                                    <span ng-show="employeeForm.city.$error.required && !employeeForm.city.$pristine" class="help-block"> City is required.</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group" ng-class="{'has-error' : employeeForm.zip.$error.required && !employeeForm.zip.$pristine}">
+                                    <label for="zip" class="control-label">Zip</label>
+                                    <input type="text" class="form-control" id="zip" name="zip" placeholder="Enter Zip (req)" ng-model="employee.zip" required>
+                                    <span ng-show="employeeForm.zip.$error.required && !employeeForm.zip.$pristine" class="help-block"> Zip is required.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <div>
+                                        <label for="ptelnum" class="control-label">Primary Tel.</label>
+                                        <div class="row">
+                                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-7">
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">(</div>
+                                                    <input type="tel" class="form-control" id="pareacode" name="pareacode" placeholder="Area" ng-model="employee.pareacode">
+                                                    <div class="input-group-addon">)</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-5">
+                                                <input type="tel" class="form-control" id="ptelnum" name="ptelnum" placeholder="Tel. num" ng-model="employee.ptelnum">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <div>
+                                        <label for="stelnum" class="control-label">Secondary Tel.</label>
+                                        <div class="row">
+                                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-7">
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">(</div>
+                                                    <input type="tel" class="form-control" id="sareacode" name="sareacode" placeholder="Area" ng-model="employee.sareacode">
+                                                    <div class="input-group-addon">)</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-5">
+                                                <input type="tel" class="form-control" id="stelnum" name="stelnum" placeholder="Tel. num" ng-model="employee.stelnum">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <div>
+                                        <label for="faxarea" class="control-label">Fax.</label>
+                                        <div class="row">
+                                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-7">
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">(</div>
+                                                    <input type="tel" class="form-control" id="faxarea" name="faxarea" placeholder="Fax" ng-model="employee.faxarea">
+                                                    <div class="input-group-addon">)</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-5">
+                                                <input type="tel" class="form-control" id="faxnum" name="faxnum" placeholder="Fax num" ng-model="employee.faxnum">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group" ng-class="{'has-error' : employeeForm.empemail.$error.required && !employeeForm.empemail.$pristine}">
+                                    <label for="empemail" class="control-label">Email</label>
+                                    <input type="email" class="form-control" id="empemail" name="empemail" placeholder="Enter Email (req)" ng-model="employee.empemail" required>
+                                    <span ng-show="employeeForm.empemail.$error.required && !employeeForm.empemail.$pristine" class="help-block"> Valid emai lis required.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group" ng-class="{'has-error' : employeeForm.birthdate.$error.required && !employeeForm.birthdate.$pristine}">
+                                    <label for="birthdate" class="control-label">Birth Date</label>
+                                    <input type="text" class="form-control" id="birthdate" name="birthdate" ng-model="employee.birthdate">
+                                    <span ng-show="employeeForm.birthdate.$error.required && !employeeForm.birthdate.$pristine" class="help-block"> Birth Date is required.</span>
+                                </div>
+                            </div>
+                            <!--div class="col-sm-6">
+                                <div class="form-group">
+                                        <button type="submit" class="btn btn-primary" ng-disabled="employeeForm.$invalid">Enter Employee</button>
+                                </div>
+                            </div-->
                         </div>
                     </div>
                 </div>
-               <div class="form-group">
-                    <div class="col-sm-10">
-                        <label for="stelnum" class="control-label">Secondary Tel.</label>
-                        <div class="row">
-                            <div class="col-xs-7 col-sm-6 col-md-5">
-                                <div class="input-group">
-                                    <div class="input-group-addon">(</div>
-                                    <input type="tel" class="form-control" id="sareacode" name="sareacode" placeholder="Area" ng-model="employee.sareacode">
-                                    <div class="input-group-addon">)</div>
-                                </div>
-                            </div>
-                            <div class="col-xs-7">
-                                <input type="tel" class="form-control" id="stelnum" name="stelnum" placeholder="Tel. number" ng-model="employee.stelnum">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-               <div class="form-group" ng-class="{'has-error' : employeeForm.address.$error.required && !employeeForm.address.$pristine}">
-                   <div class="col-sm-10">
-                       <label for="address" class="control-label">Address</label>
-                       <input type="text" class="form-control" id="address" name="address" placeholder="Enter Address (req)" ng-model="employee.address" required>
-                       <span ng-show="employeeForm.address.$error.required && !employeeForm.address.$pristine" class="help-block"> Your Address is required.</span>
-                   </div>
-               </div>
-               <div class="form-group" ng-class="{'has-error' : employeeForm.city.$error.required && !employeeForm.city.$pristine}">
-                   <div class="col-sm-10">
-                       <label for="city" class="control-label">City</label>
-                       <input type="text" class="form-control" id="city" name="city" placeholder="Enter City (req)" ng-model="employee.city" required>
-                       <span ng-show="employeeForm.city.$error.required && !employeeForm.city.$pristine" class="help-block"> City is required.</span>
-                   </div>
-               </div>
-               <div class="form-group" ng-class="{'has-error' : employeeForm.zip.$error.required && !employeeForm.zip.$pristine}">
-                   <div class="col-sm-10">
-                       <label for="zip" class="control-label">Zip</label>
-                       <input type="text" class="form-control" id="zip" name="zip" placeholder="Enter Zip (req)" ng-model="employee.zip" required>
-                       <span ng-show="employeeForm.zip.$error.required && !employeeForm.zip.$pristine" class="help-block"> Zip is required.</span>
-                   </div>
-               </div>
-               <div class="form-group">
-                    <div class="col-sm-10">
-                        <label for="stelnum" class="control-label">Fax</label><br>
-                        <div class="row">
-                            <div class="col-xs-7 col-sm-6 col-md-5">
-                                <div class="input-group">
-                                    <div class="input-group-addon">(</div>
-                                    <input type="tel" class="form-control" id="faxarea" name="faxarea" placeholder="Area" ng-model="employee.faxarea">
-                                    <div class="input-group-addon">)</div>
-                                </div>
-                            </div>
-                            <div class="col-xs-7">
-                                <input type="tel" class="form-control" id="faxnum" name="faxnum" placeholder="Tel. number" ng-model="employee.faxnum">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-               <div class="form-group" ng-class="{'has-error' : employeeForm.empemail.$error.required && !employeeForm.empemail.$pristine}">
-                   <div class="col-sm-10">
-                   <label for="empemail" class="control-label">Email</label>
-                       <input type="email" class="form-control" id="empemail" name="empemail" placeholder="Enter Email (req)" ng-model="employee.empemail" required>
-                       <span ng-show="employeeForm.empemail.$error.required && !employeeForm.empemail.$pristine" class="help-block"> Valid email is required.</span>
-                   </div>
-               </div>
-               <div class="form-group" ng-class="{'has-error' : employeeForm.birthdate.$error.required && !employeeForm.birthdate.$pristine}">
-                  <div class="col-sm-10">
-                      <label for="birthdate" class="control-label">Birth Date</label>
-                      <input type="text" class="form-control" id="birthdate" name="birthdate" ng-model="employee.birthdate">
-                      <span ng-show="employeeForm.birthdate.$error.required && !employeeForm.birthdate.$pristine" class="help-block"> Birth Date is required.</span>
-                  </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-primary" ng-disabled="employeeForm.$invalid">Enter Employee</button>
-                    </div>
-                </div>
+              </div>
             </form>
             </div>
              <div class="col-xs-12 col-sm-3">

@@ -103,3 +103,8 @@ body {
   position: absolute;
   right: 0px;
 }
+
+label  {
+    color:gray;
+    text-decoration: none;
+}
