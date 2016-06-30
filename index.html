@@ -9,12 +9,12 @@
     <title>Claims Website</title>
      <!-- Bootstrap -->
 
-     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-     <link href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet">
-     <link href="bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-     <link href="css/bootstrap-social.css" rel="stylesheet">
-     <link href="css/bootstrap-datepicker3.css" rel="stylesheet">
-     <link href="css/mystyles.css" rel="stylesheet">
+    <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/bootstrap-social.css" rel="stylesheet">
+    <link href="css/bootstrap-datepicker3.css" rel="stylesheet">
+    <link href="css/mystyles.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -101,13 +101,15 @@
                         <hr>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-lg-6">
                 <div id="employee" class="row row-content">
-                    <div class="col-xs-6">
-                       	<h3><i class="fa fa-user fa-lg"></i>&nbsp;&nbsp;Employee (Claimant)</h3>
+                    <div class="col-xs-12">
+                        <h3><i class="fa fa-user fa-lg"></i>&nbsp;&nbsp;Employee (Claimant)</h3>
                     </div>
                     <div id="status_para" class="col-xs-12">
                     </div>
-                    <div class="col-xs-6" ng-controller="EmployeeController">
+                    <div class="col-xs-12" ng-controller="EmployeeController">
                         <div class="row">
                             <div class="col-sm-4">
                                 <div class="form-group" ng-class="{'has-error' : employeeForm.firstname.$error.required && !employeeForm.firstname.$pristine}">
@@ -154,38 +156,40 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-sm-12">
                                 <div class="form-group">
                                     <div>
                                         <label for="ptelnum" class="control-label">Primary Tel.</label>
                                         <div class="row">
-                                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-7">
+                                            <div class="col-xs-6 col-sm-4 col-md-4 col-lg-4">
                                                 <div class="input-group">
                                                     <div class="input-group-addon">(</div>
                                                     <input type="tel" class="form-control" id="pareacode" name="pareacode" placeholder="Area" ng-model="employee.pareacode">
                                                     <div class="input-group-addon">)</div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-5">
+                                            <div class="col-xs-6 col-sm-8 col-md-8 col-lg-8">
                                                 <input type="tel" class="form-control" id="ptelnum" name="ptelnum" placeholder="Tel. num" ng-model="employee.ptelnum">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-6">
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
                                 <div class="form-group">
                                     <div>
                                         <label for="stelnum" class="control-label">Secondary Tel.</label>
                                         <div class="row">
-                                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-7">
+                                            <div class="col-xs-6 col-sm-4 col-md-6 col-lg-4">
                                                 <div class="input-group">
                                                     <div class="input-group-addon">(</div>
                                                     <input type="tel" class="form-control" id="sareacode" name="sareacode" placeholder="Area" ng-model="employee.sareacode">
                                                     <div class="input-group-addon">)</div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-5">
+                                            <div class="col-xs-6 col-sm-8 col-md-6 col-lg-8">
                                                 <input type="tel" class="form-control" id="stelnum" name="stelnum" placeholder="Tel. num" ng-model="employee.stelnum">
                                             </div>
                                         </div>
@@ -194,30 +198,23 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-sm-12">
                                 <div class="form-group">
                                     <div>
                                         <label for="faxarea" class="control-label">Fax.</label>
                                         <div class="row">
-                                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-7">
+                                            <div class="col-xs-6 col-sm-4 col-md-6 col-lg-4">
                                                 <div class="input-group">
                                                     <div class="input-group-addon">(</div>
                                                     <input type="tel" class="form-control" id="faxarea" name="faxarea" placeholder="Fax" ng-model="employee.faxarea">
                                                     <div class="input-group-addon">)</div>
                                                 </div>
                                             </div>
-                                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-5">
+                                            <div class="col-xs-6 col-sm-8 col-md-6 col-lg-8">
                                                 <input type="tel" class="form-control" id="faxnum" name="faxnum" placeholder="Fax num" ng-model="employee.faxnum">
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group" ng-class="{'has-error' : employeeForm.empemail.$error.required && !employeeForm.empemail.$pristine}">
-                                    <label for="empemail" class="control-label">Email</label>
-                                    <input type="email" class="form-control" id="empemail" name="empemail" placeholder="Enter Email (req)" ng-model="employee.empemail" required>
-                                    <span ng-show="employeeForm.empemail.$error.required && !employeeForm.empemail.$pristine" class="help-block"> Valid emai lis required.</span>
                                 </div>
                             </div>
                         </div>
@@ -229,167 +226,288 @@
                                     <span ng-show="employeeForm.birthdate.$error.required && !employeeForm.birthdate.$pristine" class="help-block"> Birth Date is required.</span>
                                 </div>
                             </div>
-                            <!--div class="col-sm-6">
-                                <div class="form-group">
-                                        <button type="submit" class="btn btn-primary" ng-disabled="employeeForm.$invalid">Enter Employee</button>
+                            <div class="col-sm-6">
+                                <div class="form-group" ng-class="{'has-error' : employeeForm.empemail.$error.required && !employeeForm.empemail.$pristine}">
+                                    <label for="empemail" class="control-label">Email</label>
+                                    <input type="email" class="form-control" id="empemail" name="empemail" placeholder="Enter Email (req)" ng-model="employee.empemail" required>
+                                    <span ng-show="employeeForm.empemail.$error.required && !employeeForm.empemail.$pristine" class="help-block"> Valid emai lis required.</span>
                                 </div>
-                            </div-->
+                            </div>
                         </div>
                     </div>
                 </div>
-              </div>
+                        </div>
+               <div class="col-lg-6">
+                 <div class="col-xs-12">
+                <div id="claim" class="row row-content">
+                    <div class="col-xs-12">
+                       	<h3><i class="fa fa-hospital-o fa-lg"></i>&nbsp;&nbsp;Claim Information</h3>
+                    </div>
+                         <div class="col-xs-12" ng-controller="EmployeeController">
+                             <div class="row">
+                                 <div class="col-sm-4">
+                                     <div class="form-group" ng-class="{'has-error' : employeeForm.injurydate.$error.required && !employeeForm.injurydate.$pristine}">
+                                         <label for="injurydate" class="control-label">Date of Injury</label>
+                                         <input type="text" class="form-control" id="injurydate" name="injurydate" ng-model="claim.injurydate">
+                                         <span ng-show="employeeForm.injurydate.$error.required && !employeeForm.injurydate.$pristine" class="help-block"> Date is required.</span>
+                                     </div>
+                                 </div>
+                                 <div class="col-sm-4">
+                                     <div class="form-group" ng-class="{'has-error' : employeeForm.injurydate.$error.required && !employeeForm.injurydate.$pristine}">
+                                         <label for="datereported" class="control-label">Date Reported</label>
+                                         <input type="text" class="form-control" id="datereported" name="datereported" ng-model="claim.datereported">
+                                         <span ng-show="employeeForm.datereported.$error.required && !employeeForm.daterported.$pristine" class="help-block"> Reported Date is required.</span>
+                                     </div>
+                                 </div>
+                                 <div class="col-sm-4">
+                                     <div class="form-group">
+                                         <label for="injurytime" class="control-label">Time of Injury</label>
+                                         <input type="text" class="form-control" id="injurytime" name="injurytime" placeholder="Enter time">
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="wrno" class="control-label">Wright #</label>
+                                         <input type="text" class="form-control" id="wrno" name="wrno" placeholder="Enter Wright">
+                                     </div>
+                                 </div>
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="wcno" class="control-label">Comp #</label>
+                                             <input type="text" class="form-control" id="wcno" name="wcno" placeholder="Comp Num">
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="department" class="control-label">Department</label>
+                                             <select id="department" class="form-control">
+                                                 <option>Municipal Works</option>
+                                                 <option>Choice 2</option>
+                                                 <option>Choice 3</option>
+                                                 <option>Choice 4</option>
+                                             </select>
+                                     </div>
+                                 </div>
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="division" class="control-label">Division</label>
+                                             <select id="division" class="form-control">
+                                                 <option>Waste Management</option>
+                                                 <option>Choice 2</option>
+                                                 <option>Choice 3</option>
+                                                 <option>Choice 4</option>
+                                             </select>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="jobtitle" class="control-label">Job Title</label>
+                                             <select id="jobtitle" class="form-control">
+                                                 <option>Sanitation Helper</option>
+                                                 <option>Choice 2</option>
+                                                 <option>Choice 3</option>
+                                                 <option>Choice 4</option>
+                                             </select>
+                                      </div>
+                                 </div>
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="injudrydesc" class="control-label">Injury Description</label>
+                                             <select id="injurydesc" class="form-control">
+                                                 <option>Slip/Trip/Fall</option>
+                                                 <option>Choice 2</option>
+                                                 <option>Choice 3</option>
+                                                 <option>Choice 4</option>
+                                             </select>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="doctor" class="control-label">Doctor </label>
+                                         <select id="doctor" class="form-control">
+                                             <option>Brennan</option>
+                                             <option>Choice 2</option>
+                                             <option>Choice 3</option>
+                                             <option>Choice 4</option>
+                                         </select>
+                                     </div>
+                                 </div>
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="location" class="control-label">Location</label>
+                                         <input type="text" class="form-control" id="location" name="location" placeholder="Enter Location">
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-sm-12">
+                                     <div class="form-group">
+                                         <label for="area" class="control-label">Location Area</label>
+                                             <textarea id="locationarea" name="locationarea" class="form-control" placeholder="Enter Location Area"></textarea>
+                                     </div>
+                                  </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-sm-12">
+                                     <div class="form-group">
+                                         <label for="claimtype" class="control-label">Claim Type</label>
+                                         <div class="col-sm-12">
+                                             <div class="btn-group" data-toggle="buttons">
+                                                 <label class="radio-inline">
+                                                     <input type="radio" name="claimtype" value="1" />Gen./Notate
+                                                 </label>
+                                                 <label class="radio-inline">
+                                                     <input type="radio" name="claimtype" value="2" />Medical Only
+                                                 </label>
+                                                 <label class="radio-inline">
+                                                     <input type="radio" name="claimtype" value="3" />Indemnity
+                                                 </label>
+                                                 <p></p>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="area" class="control-label">Work Status</label>
+                                             <select id="status" class="form-control">
+                                                 <option>Full Duty</option>
+                                                 <option>Light Duty</option>s
+                                                 <option>Transitional</option>
+                                                 <option>Out of Work</option>
+                                                 <option>Separation from Town</option>
+                                             </select>
+                                         </div>
+                                  </div>
+                                 <div class="col-sm-6">
+                                     <div class="form-group" ng-class="{'has-error' : employeeForm.statusdate.$error.required && !employeeForm.statusdate.$pristine}">
+                                         <label for="statusdate" class="control-label">Status Date</label>
+                                         <input type="text" class="form-control" id="statusdate" name="statusdate" ng-model="claim.statusdate">
+                                         <span ng-show="employeeForm.statusdate.$error.required && !employeeForm.statusdate.$pristine" class="help-block"> Date is required.</span>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="daysout" class="control-label">Total Days Out</label>
+                                         <input type="text" class="form-control" id="dayslost" name="daylost" placeholder="">
+                                     </div>
+                                 </div>
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="sponame" class="control-label">Supervisor</label>
+                                         <input type="text" class="form-control" id="sponame" name="sponame" placeholder="Enter SPO name">
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="empstatus" class="control-label">Employment Status</label>
+                                             <select id="empstatus" class="form-control">
+                                                 <option>Part-Time</option>
+                                                 <option>Full-Time</option>s
+                                                 <option>Seasonal</option>
+                                             </select>
+                                     </div>
+                                  </div>
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <div class="form-group">
+                                             <label for="empstatusohter" class="control-label">Other Status</label>
+                                             <input type="text" class="form-control" id="empstatusother" name="empstatusother" placeholder="">
+                                     </div>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="witnessname" class="control-label">Witness Name</label>
+                                         <input type="text" class="form-control" id="witnessname" name="witnessname" placeholder="">
+                                     </div>
+                                 </div>
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="witnessphone" class="control-label">Witness Phone</label>
+                                         <input type="text" class="form-control" id="witnessphone" name="witnessphone" placeholder="Enter Witness Phone">
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="claimantage" class="control-label">Age at Injury Date</label>
+                                         <input type="text" class="form-control" id="claimantage" name="claimantage" placeholder="">
+                                     </div>
+                                 </div>
+                                 <div class="col-sm-6">
+                                     <div class="form-group" ng-class="{'has-error' : employeeForm.appdate.$error.required && !employeeForm.appdate.$pristine}">
+                                         <label for="appdate" class="control-label">207-c App Date</label>
+                                         <input type="text" class="form-control" id="appdate" name="appdate" ng-model="claim.appdate">
+                                         <span ng-show="employeeForm.appdate.$error.required && !employeeForm.appdate.$pristine" class="help-block"> Date is required.</span>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="decision" class="control-label">Decision</label>
+                                         <input type="text" class="form-control" id="decision" name="decision" placeholder="Enter Decision">
+                                     </div>
+                                 </div>
+                                 <div class="col-sm-6">
+                                     <div class="form-group">
+                                         <label for="decision" class="control-label">Challenge Duty Status</label><br>
+                                         <div class="btn-group" data-toggle="buttons">
+                                             <label class="radio-inline">
+                                                 <input type="radio" name="statuschallenge" value="0" checked/> No
+                                             </label>
+                                             <label class="radio-inline">
+                                                 <input type="radio" name="statuschallenge" value="1" /> Yes
+                                             </label>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-sm-12">
+                                     <div class="form-group">
+                                         <label for="notes" class="control-label">Notes</label>
+                                             <textarea id="notes" name="notes" class="form-control" placeholder="Enter Notes"></textarea>
+                                     </div>
+                                  </div>
+                             </div>
+                         </div>
+                </div>
+                     </div>
             </form>
             </div>
              <div class="col-xs-12 col-sm-3">
                 <p style="padding:20px;"></p>
             </div>
       </div>
-        <!--div id="claim" class="row row-content">
-             <div class="col-xs-12">
-               <h3>Claim Information</h3>
-             </div>
-              <div class="col-xs-12 col-sm-9">
-              <form class="form-horizontal" role="form">
-                <div class="form-group">
-                  <label for="datetimepicker1" class="col-sm-2 control-label">Date</label>
-                  <div class="input-group date col-sm-10" id="datetimepicker1">
-                    <input type="text"  class="form-control" id="injurydate" name="injurydate"/>
-                    <span class="input-group-addon">
-                      <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                  </div>
-                </div>
-                <div class="form-group">
-                    <label for="wrno" class="col-sm-2 control-label">Wright #</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="wrno" name="wrno" placeholder="Enter Wright Risk Claim Number">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label for="notes" class="control-label">Notes</label>
+                            <textarea id="notes" name="notes" class="form-control" placeholder="Enter Notes"></textarea>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="wcno" class="col-sm-2 control-label">Workers Comp #</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="wcno" name="wcno" placeholder="Enter Workers Comp Claim Number">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="department" class="col-sm-2 control-label">Department</label>
-                    <div class="col-sm-10">
-                      <select id="department" class="form-control">
-                        <option>Municipal Works</option>
-                        <option>Choice 2</option>
-                        <option>Choice 3</option>
-                        <option>Choice 4</option>
-                      </select>
-                    </div>
-                  </div>
-                <div class="form-group">
-                    <label for="division" class="col-sm-2 control-label">Division</label>
-                    <div class="col-sm-10">
-                      <select id="division" class="form-control">
-                        <option>Waste Management</option>
-                        <option>Choice 2</option>
-                        <option>Choice 3</option>
-                        <option>Choice 4</option>
-                      </select>
-                </div>
-              </div>
-              <div class="form-group">
-                    <label for="jobtitle" class="col-sm-2 control-label">Job Title</label>
-                    <div class="col-sm-10">
-                      <select id="jobtitle" class="form-control">
-                        <option>Sanitation Helper</option>
-                        <option>Choice 2</option>
-                        <option>Choice 3</option>
-                        <option>Choice 4</option>
-                      </select>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="injudrydesc" class="col-sm-2 control-label">Injury Description</label>
-                <div class="col-sm-10">
-                  <select id="injurydesc" class="form-control">
-                    <option>Slip/Trip/Fall</option>
-                    <option>Choice 2</option>
-                    <option>Choice 3</option>
-                    <option>Choice 4</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group">
-                    <label for="doctor" class="col-sm-2 control-label">Doctor </label>
-                    <div class="col-sm-10">
-                      <select id="doctor" class="form-control">
-                        <option>Brennan</option>
-                        <option>Choice 2</option>
-                        <option>Choice 3</option>
-                        <option>Choice 4</option>
-                      </select>
-                    </div>
-              </div>
-              <div class="form-group">
-                <label for="location" class="col-sm-2 control-label">Location</label>
-                <div class="col-sm-10">
-                  <input type="text" class="form-control" id="location" name="location" placeholder="Enter Location">
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="area" class="col-sm-2 control-label">Location Area</label>
-                <div class="col-sm-10">
-                  <input type="text" class="form-control" id="area" name="area" placeholder="Enter Location Area">
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="claimtype" class="col-sm-2 control-label">Claim Type</label>
-                <div class="col-sm-10">
-                  <div class="btn-group" data-toggle="buttons">
-                    <label class="radio-inline">
-                      <input type="radio" name="claimtype" value="1" />General Incident/Notate
-                    </label>
-                    <label class="radio-inline">
-                      <input type="radio" name="claimtype" value="2" />Medical Only
-                    </label>
-                    <label class="radio-inline">
-                      <input type="radio" name="claimtype" value="3" />Indemnity
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="area" class="col-sm-2 control-label">Work Status</label>
-                <div class="col-sm-5">
-                  <select id="status" class="form-control">
-                    <option>Full Duty</option>
-                    <option>Light Duty</option>s
-                    <option>Transitional</option>
-                    <option>Out of Work</option>
-                    <option>Separation from Town</option>
-                  </select>
-                </div>
-                <div class="input-group date col-sm-5" id="datetimepicker2">
-                  <input type="text"  class="form-control" id="wsdate" name="wsdate"/>
-                    <span class="input-group-addon">
-                      <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="daysout" class="col-sm-2 control-label">Days Out</label>
-                <div class="col-sm-10">
-                  <input type="text" class="form-control" id="daysout" name="daysout" placeholder="Enter Days Out">
-                </div>
-              </div>
-              <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                  <button type="submit" class="btn btn-primary">Enter Claim</button>
-                </div>
-              </div>
-            </form>
-          </div>
-          <div class="col-xs-12 col-sm-3">
-            <p style="padding:20px;"></p>
-          </div>
-        </!--div>
-        <div id="investigation" class="row row-content">
+
+        <!--div id="investigation" class="row row-content">
              <div class="col-xs-12">
                <h3>Investigation</h3>
              </div>
@@ -542,7 +660,7 @@
           <div class="col-xs-12 col-sm-3">
             <p style="padding:20px;"></p>
           </div>
-        </div>
+        </!--div>
 
       </div>
             <nav class="hidden-xs col-sm-2" id="myScrollspy">
@@ -666,12 +784,46 @@
 
     $(document).ready(function()  {
 
-        var date_input = $('input[name="birthdate"]');
-        var container = $('.employee form').length > 0 ? $('.employee form').parent() : "body";
+        var emp_date_input = $('input[name="birthdate"]');
+        var claim_date_input = $('input[name="injurydate"]');
+        var claim_status_input = $('input[name="statusdate"]');
+        var claim_app_input = $('input[name="appdate"]');
+        var claim_reported_input = $('input[name="datereported"]');
 
-        date_input.datepicker({
+        var emp_container = $('.employee form').length > 0 ? $('.employee form').parent() : "body";
+        var claim_container = $('.claim form').length > 0 ? $('.claim form').parent() : "body";
+
+        emp_date_input.datepicker({
             format: 'mm/dd/yyyy',
-            container: container,
+            container: emp_container,
+            todayHighlight: true,
+            autoclose: true
+        })
+
+        claim_date_input.datepicker({
+            format: 'mm/dd/yyyy',
+            container: claim_container,
+            todayHighlight: true,
+            autoclose: true
+        })
+
+        claim_reported_input.datepicker({
+            format: 'mm/dd/yyyy',
+            container: claim_container,
+            todayHighlight: true,
+            autoclose: true
+        })
+
+        claim_status_input.datepicker({
+            format: 'mm/dd/yyyy',
+            container: claim_container,
+            todayHighlight: true,
+            autoclose: true
+        })
+
+        claim_app_input.datepicker({
+            format: 'mm/dd/yyyy',
+            container: claim_container,
             todayHighlight: true,
             autoclose: true
         })
@@ -679,9 +831,6 @@
         $("#loginLink").click(function() {
             $("#loginModal").modal();
         });
-
-
-
         
     });
 

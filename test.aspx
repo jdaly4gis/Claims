@@ -1,21 +1,20 @@
-﻿    <%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="Default" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="Default" %>
 
 <!DOCTYPE html>
-<html >
+<html>
 <head>
-
-          <link rel="Stylesheet" type="text/css" href="js/dojo/resources/dojo.css" />
-          <link rel="Stylesheet" type="text/css" href="js/dijit/themes/claro/claro.css" />
-          <link rel="Stylesheet" type="text/css" href="js/dijit/themes/claro/document.css" />
-          <link rel="Stylesheet" type="text/css" href="js/gridx/resources/claro/Gridx.css" />
-          <link rel="Stylesheet" type="text/css" href="js/dojox/layout/resources/ExpandoPane.css" />
+    <link rel="Stylesheet" type="text/css" href="js/dojo/resources/dojo.css" />
+    <link rel="Stylesheet" type="text/css" href="js/dijit/themes/claro/claro.css" />
+    <link rel="Stylesheet" type="text/css" href="js/dijit/themes/claro/document.css" />
+    <link rel="Stylesheet" type="text/css" href="js/gridx/resources/claro/Gridx.css" />
+    <link rel="Stylesheet" type="text/css" href="js/dojox/layout/resources/ExpandoPane.css" />
 
 	<style type="text/css">
-html, body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-}
+     html, body {
+         width: 100%;
+         height: 100%;
+         margin: 0;
+   }
 
 #borderContainer {
   width: 100%;
